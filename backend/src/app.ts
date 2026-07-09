@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from "express";
+import queryRouter from "./routes/query.route.js";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get("/", (req: Request, res: Response) => {
     message: "Api is healthy",
   });
 });
+app.use("/api/v1/queries", queryRouter);
 
 export default app;
