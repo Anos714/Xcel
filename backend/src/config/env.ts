@@ -1,0 +1,22 @@
+import { z } from "zod";
+import "dotenv/config";
+
+const envSchema = z.object({
+  PORT: z.coerce.number().default(8080),
+  NODE_ENV: z.string().default("development"),
+
+  DATABASE_URL: z.string().url(),
+
+  UPSTASH_REDIS_URL: z.string().url(),
+  TAVILY_API_KEY: z.string(),
+  GEMINI_API_KEY: z.string(),
+  BUFFER_API_KEY: z.string(),
+});
+
+const envParse = envSchema.safeParse(process.env);
+if (!envParse.success) {
+  console.error("Error parsing environment variables", envParse.error.issues);
+  process.exit(1);
+}
+
+export const env = envParse.data;
