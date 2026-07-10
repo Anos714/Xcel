@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "queries_user_query_unique" ON "queries" ("clerk_user_id","query");

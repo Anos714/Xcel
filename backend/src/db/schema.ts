@@ -8,6 +8,7 @@ import {
   jsonb,
   pgEnum,
   index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 // enums
@@ -42,6 +43,10 @@ export const queries = pgTable(
   },
   (table) => ({
     clerkUserIdx: index("queries_clerk_user_idx").on(table.clerkUserId),
+    uniqueUserQuery: uniqueIndex("queries_user_query_unique").on(
+      table.clerkUserId,
+      table.query,
+    ),
   }),
 );
 
