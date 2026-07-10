@@ -10,7 +10,8 @@ const envSchema = z.object({
   UPSTASH_REDIS_URL: z.string().url(),
   TAVILY_API_KEY: z.string(),
   GEMINI_API_KEY: z.string(),
-  BUFFER_API_KEY: z.string(),
+  BUFFER_ACCESS_TOKEN: z.string(),
+  BUFFER_CHANNEL_ID: z.string(),
 });
 
 const envParse = envSchema.safeParse(process.env);

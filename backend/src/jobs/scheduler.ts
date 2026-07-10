@@ -18,3 +18,47 @@ export const registerAutomationScheduler = async (userId: string) => {
     },
   );
 };
+
+import { postingQueue } from "../queues/posting.queue";
+
+export const registerPostingSchedulers = async () => {
+  await postingQueue.upsertJobScheduler(
+    "10-am-post",
+    {
+      pattern: "0 10 * * *",
+    },
+    {
+      name: "post-tweet",
+    },
+  );
+
+  await postingQueue.upsertJobScheduler(
+    "2-pm-post",
+    {
+      pattern: "0 14 * * *",
+    },
+    {
+      name: "post-tweet",
+    },
+  );
+
+  await postingQueue.upsertJobScheduler(
+    "6-pm-post",
+    {
+      pattern: "0 18 * * *",
+    },
+    {
+      name: "post-tweet",
+    },
+  );
+
+  await postingQueue.upsertJobScheduler(
+    "10-pm-post",
+    {
+      pattern: "0 22 * * *",
+    },
+    {
+      name: "post-tweet",
+    },
+  );
+};
