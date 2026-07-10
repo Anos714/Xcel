@@ -3,9 +3,6 @@ import { env } from "./env";
 
 export const redisClient = new Redis(env.UPSTASH_REDIS_URL, {
   maxRetriesPerRequest: null,
-  tls: {
-    rejectUnauthorized: false,
-  },
 });
 
 redisClient.on("connect", () => {
@@ -18,4 +15,12 @@ redisClient.on("ready", () => {
 
 redisClient.on("error", (err) => {
   console.error("Redis connection error:", err);
+});
+
+redisClient.on("close", () => {
+  console.log("Redis connection closed");
+});
+
+redisClient.on("reconnecting", () => {
+  console.log("Redis reconnecting...");
 });
