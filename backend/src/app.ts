@@ -1,5 +1,6 @@
 import express, { type Request, type Response } from "express";
 import queryRouter from "./routes/query.route.js";
+import automationRouter from "./routes/automation.routes.js";
 import { clerkMiddleware } from "@clerk/express";
 
 const app = express();
@@ -16,5 +17,6 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 app.use("/api/v1/queries", queryRouter);
+app.use("/api/v1/automation", automationRouter);
 
 export default app;
