@@ -3,7 +3,7 @@ import {
   paramsSchema,
   querySchema,
   updateQuerySchema,
-} from "../../validators/query.validator";
+} from "../validators/query.validator";
 import { queryService } from "../services/query.service";
 import { getAuth } from "@clerk/express";
 
