@@ -5,7 +5,7 @@ import {
   type SearchResult,
 } from "../utils/formatSearchResults";
 
-type TweetResponse = {
+export type TweetResponse = {
   tweetContent: string;
   hashtags: string[];
 };

@@ -9,6 +9,7 @@ import {
   pgEnum,
   index,
   uniqueIndex,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 // enums
@@ -59,11 +60,12 @@ export const tweets = pgTable(
 
     content: text("content").notNull(),
 
+    hashtags: text("hashtags").array().notNull(),
+
+    query: varchar("query", { length: 255 }).notNull(),
     type: tweetTypeEnum("type").notNull(),
 
     status: tweetStatusEnum("status").default("pending").notNull(),
-
-    sourceLinks: jsonb("source_links").$type<string[]>(),
 
     scheduledFor: timestamp("scheduled_for"),
 
