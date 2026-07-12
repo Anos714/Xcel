@@ -1,11 +1,22 @@
 import app from "./app";
 import { env } from "./config/env";
+import { registerAutomationScheduler, registerPostingSchedulers } from './jobs/scheduler';
+import './workers/automation.worker.js'
+import './workers/posting.worker.js'
+
 
 const PORT = env.PORT;
-const startServer = () => {
+const startServer = async() => {
+  
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
+
+  await registerAutomationScheduler(env.CLERK_USER_ID);
+
+  await registerPostingSchedulers();
+
+  console.log("✅ Schedulers Registered");
 };
 
 startServer();

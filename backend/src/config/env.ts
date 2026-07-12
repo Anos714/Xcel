@@ -12,6 +12,8 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string(),
   BUFFER_ACCESS_TOKEN: z.string(),
   BUFFER_CHANNEL_ID: z.string(),
+  CLERK_SECRET_KEY: z.string(),
+  CLERK_USER_ID:z.string()
 });
 
 const envParse = envSchema.safeParse(process.env);

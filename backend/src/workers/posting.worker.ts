@@ -8,6 +8,7 @@ import { postTweet } from "../services/buffer.service";
 export const postingWorker = new Worker(
   "posting",
   async () => {
+      console.log("Posting Worker Started");
     const pendingTweet = await db
       .select()
       .from(tweets)
@@ -22,12 +23,20 @@ export const postingWorker = new Worker(
 
     const tweet = pendingTweet[0];
 
+  
+
     if (!tweet) {
       console.log("No tweet found");
       return;
     }
 
-    const bufferResponse = await postTweet(tweet.content);
+    try{
+         console.log("📝 Posting Tweet:", tweet.content);
+
+
+    const bufferResponse = await postTweet(tweet.content,tweet.hashtags);
+
+      console.log("📤 Buffer Response:", bufferResponse);
 
     await db
       .update(tweets)
@@ -37,10 +46,27 @@ export const postingWorker = new Worker(
       })
       .where(eq(tweets.id, tweet.id));
 
+       console.log("✅ Tweet Posted");
+
     return {
       success: true,
       tweetId: tweet.id,
     };
+  } catch (error) {
+    console.error("Posting worker error:", error);
+
+    await db
+      .update(tweets)
+      .set({
+        status: "failed",
+      })
+      .where(eq(tweets.id, tweet.id));
+
+    return {
+      success: false,
+      tweetId: tweet.id,
+    };
+  }
   },
   {
     connection: redisClient,

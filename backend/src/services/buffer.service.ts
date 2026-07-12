@@ -1,4 +1,6 @@
 import { env } from "../config/env";
+import { db } from "../db";
+import { tweets } from "../db/schema";
 
 type BufferPost = {
   id: string;
@@ -18,8 +20,9 @@ type GraphQLResponse = {
   }[];
 };
 
-export const postTweet = async (content: string): Promise<BufferPost> => {
-  const mutation = `
+export const postTweet = async (content: string, hashtags: string[]): Promise<BufferPost> => {
+
+     const mutation = `
     mutation CreatePost($input: CreatePostInput!) {
       createPost(input: $input) {
         ... on PostActionSuccess {
@@ -37,11 +40,16 @@ export const postTweet = async (content: string): Promise<BufferPost> => {
     }
   `;
 
+  const finalContent = `${content}\n${hashtags
+    .map((tag) => `#${tag}`)
+    .join(" ")}`;
+
   const variables = {
     input: {
       channelId: env.BUFFER_CHANNEL_ID,
-      text: content,
+      text: finalContent,
       schedulingType: "automatic",
+      mode:"shareNow"
     },
   };
 
@@ -70,10 +78,13 @@ export const postTweet = async (content: string): Promise<BufferPost> => {
   const post = result.data?.createPost?.post;
 
   if (!post) {
+   
     throw new Error(
       result.data?.createPost?.message ?? "Failed to create Buffer post.",
     );
   }
 
   return post;
+  
+ 
 };

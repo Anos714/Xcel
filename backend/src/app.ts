@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from "express";
 import queryRouter from "./routes/query.route.js";
 import automationRouter from "./routes/automation.routes.js";
-import { clerkMiddleware } from "@clerk/express";
+import { clerkMiddleware, getAuth } from "@clerk/express";
 
 const app = express();
 

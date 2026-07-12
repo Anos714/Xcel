@@ -15,8 +15,12 @@ export const runAutomation = async (userId: string) => {
 
     for (const query of randomQueries) {
       const searchResults = await searchWeb(query);
+      console.log(searchResults);
+      
 
       const tweet = await generateTweet(searchResults);
+      console.log(tweet);
+      
 
       await savePendingTweet(userId, query, tweet);
 

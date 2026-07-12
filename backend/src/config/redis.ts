@@ -3,10 +3,13 @@ import { env } from "./env";
 
 export const redisClient = new Redis(env.UPSTASH_REDIS_URL, {
   maxRetriesPerRequest: null,
+  
 });
 
+
+
 redisClient.on("connect", () => {
-  console.log("Redis connecting...");
+  console.log("Redis connected");
 });
 
 redisClient.on("ready", () => {

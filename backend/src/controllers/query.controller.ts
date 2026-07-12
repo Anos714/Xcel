@@ -7,8 +7,12 @@ import {
 import { queryService } from "../services/query.service";
 import { getAuth } from "@clerk/express";
 
+
+
+
 export const createQuery = async (req: Request, res: Response) => {
   const bodyResult = querySchema.safeParse(req.body);
+  console.log(req.headers.authorization);
 
   if (!bodyResult.success) {
     return res.status(400).json({
@@ -19,7 +23,7 @@ export const createQuery = async (req: Request, res: Response) => {
   }
 
   const { query } = bodyResult.data;
-
+  
   const { isAuthenticated, userId } = getAuth(req);
 
   if (!isAuthenticated) {

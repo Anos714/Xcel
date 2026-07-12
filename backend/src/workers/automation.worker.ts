@@ -9,7 +9,12 @@ type AutomationJob = {
 export const automationWorker = new Worker<AutomationJob>(
   "automation",
   async (job) => {
+    console.log("Automation Worker Started");
+    console.log(job.data);
+
     await runAutomation(job.data.userId);
+
+    console.log("Automation Completed");
   },
   {
     connection: redisClient,

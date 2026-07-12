@@ -21,7 +21,7 @@ const createQuery = async (queryStr: string, userId: string) => {
 
 const getQueries = async (userId: string) => {
   try {
-    const [data] = await db
+    const data = await db
       .select()
       .from(queries)
       .where(eq(queries.clerkUserId, userId));

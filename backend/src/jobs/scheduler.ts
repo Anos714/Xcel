@@ -25,7 +25,7 @@ export const registerPostingSchedulers = async () => {
   await postingQueue.upsertJobScheduler(
     "10-am-post",
     {
-      pattern: "0 10 * * *",
+      pattern: "00 10 * * *",
     },
     {
       name: "post-tweet",
