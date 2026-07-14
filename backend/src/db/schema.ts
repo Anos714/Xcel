@@ -60,9 +60,9 @@ export const tweets = pgTable(
 
     content: text("content").notNull(),
 
-    hashtags: text("hashtags").array().notNull(),
+    hashtags: text("hashtags").array(),
 
-    query: varchar("query", { length: 255 }).notNull(),
+    query: varchar("query", { length: 255 }),
     type: tweetTypeEnum("type").notNull(),
 
     status: tweetStatusEnum("status").default("pending").notNull(),

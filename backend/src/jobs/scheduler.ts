@@ -1,4 +1,6 @@
 import { automationQueue } from "../queues/automation.queue";
+import { postingQueue } from "../queues/posting.queue";
+
 
 export const registerAutomationScheduler = async (userId: string) => {
   await automationQueue.upsertJobScheduler(
@@ -19,7 +21,6 @@ export const registerAutomationScheduler = async (userId: string) => {
   );
 };
 
-import { postingQueue } from "../queues/posting.queue";
 
 export const registerPostingSchedulers = async () => {
   await postingQueue.upsertJobScheduler(
@@ -62,3 +63,5 @@ export const registerPostingSchedulers = async () => {
     },
   );
 };
+
+

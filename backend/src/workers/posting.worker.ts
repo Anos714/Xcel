@@ -7,21 +7,43 @@ import { postTweet } from "../services/buffer.service";
 
 export const postingWorker = new Worker(
   "posting",
-  async () => {
+  async (job) => {
       console.log("Posting Worker Started");
-    const pendingTweet = await db
-      .select()
-      .from(tweets)
-      .where(and(eq(tweets.status, "pending"), eq(tweets.type, "automation")))
-      .orderBy(asc(tweets.createdAt))
-      .limit(1);
 
-    if (pendingTweet.length === 0) {
-      console.log("No pending tweets found");
-      return;
+ let tweet;
+
+  //  manual flow
+    if (job.data?.tweetId) {
+      console.log("📌 Manual Tweet");
+
+      const result = await db
+        .select()
+        .from(tweets)
+        .where(eq(tweets.id, job.data.tweetId))
+        .limit(1);
+
+      tweet = result[0];
     }
 
-    const tweet = pendingTweet[0];
+
+   //automation flow
+    else {
+      console.log("🤖 Automation Tweet");
+
+      const result = await db
+        .select()
+        .from(tweets)
+        .where(
+          and(
+            eq(tweets.status, "pending"),
+            eq(tweets.type, "automation"),
+          ),
+        )
+        .orderBy(asc(tweets.createdAt))
+        .limit(1);
+
+      tweet = result[0];
+    }
 
   
 
@@ -30,11 +52,13 @@ export const postingWorker = new Worker(
       return;
     }
 
+   
+
     try{
          console.log("📝 Posting Tweet:", tweet.content);
 
 
-    const bufferResponse = await postTweet(tweet.content,tweet.hashtags);
+    const bufferResponse = await postTweet(tweet.content,tweet.hashtags||[]);
 
       console.log("📤 Buffer Response:", bufferResponse);
 
