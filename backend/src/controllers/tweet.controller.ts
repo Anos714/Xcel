@@ -1,6 +1,7 @@
-import type { Request,Response } from "express";
+import type { NextFunction, Request,Response } from "express";
 import { tweetService } from "../services/tweet.service";
 import { enhanceTweetSchema, getTweetsSchema, tweetIdSchema, tweetSchema, updateTweetSchema } from "../validators/tweet.validator";
+import { catchAsync } from "../utils/catchAsync";
 
 
 type EnhanceTweetRes={
@@ -12,7 +13,7 @@ type EnhanceTweetRes={
         }
 }
 
-export const enhanceTweet=async(req:Request,res:Response<EnhanceTweetRes>)=>{
+export const enhanceTweet=catchAsync(async(req:Request,res:Response<EnhanceTweetRes>,next:NextFunction)=>{
     const result=enhanceTweetSchema.safeParse(req.body);
     if (!result.success) {
     return res.status(400).json({
@@ -24,21 +25,15 @@ export const enhanceTweet=async(req:Request,res:Response<EnhanceTweetRes>)=>{
 
   const { content } = result.data;
   
-try {
+
     const response=await tweetService.enhanceTweet(content)
     return res.status(200).json({
         success:true,
         message:"Query enhanced successfully",
         data:response
     })
-} catch (error) {
-    return res.status(500).json({
-        success:false,
-        message:"Internal server error",
-        error:(error as Error).message||"Something went wrong"
-    })
-}
-}
+
+})
 
 
 type ScheduleTweetRes={
@@ -49,7 +44,7 @@ type ScheduleTweetRes={
 }
 
 
-export const createTweet=async(req:Request,res:Response<ScheduleTweetRes>)=>{
+export const createTweet=catchAsync(async(req:Request,res:Response<ScheduleTweetRes>,next:NextFunction)=>{
  const result=tweetSchema.safeParse(req.body);
     if (!result.success) {
     return res.status(400).json({
@@ -64,7 +59,7 @@ export const createTweet=async(req:Request,res:Response<ScheduleTweetRes>)=>{
 
   const {content,postType,hashtags,scheduledFor}=result.data
   
-  try {
+  
         const tweet=await tweetService.createTweet(content,postType,hashtags,scheduledFor)
         return res.status(200).json({
             success:true,
@@ -72,18 +67,13 @@ export const createTweet=async(req:Request,res:Response<ScheduleTweetRes>)=>{
             data:tweet
         })
             
-    } catch (error) {
-         return res.status(500).json({
-        success:false,
-        message:"Internal server error",
-        error:(error as Error).message||"Something went wrong"
-    })
-    }
-}
+   
+})
 
-export const getTweetsController = async (
+export const getTweetsController = catchAsync(async (
   req: Request,
-  res: Response
+  res: Response,
+  next:NextFunction
 ) => {
 
      const result = getTweetsSchema.safeParse(req.query);
@@ -95,7 +85,7 @@ export const getTweetsController = async (
     });
   }
    
-  try {
+ 
     
    
     const query=result.data;
@@ -110,21 +100,14 @@ export const getTweetsController = async (
       success: true,
       ...tweets,
     });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Something went wrong",
-    });
-  }
-};
+ 
+});
 
 
-export const updateTweetController = async (
+export const updateTweetController = catchAsync(async (
   req: Request,
-  res: Response
+  res: Response,
+  next:NextFunction
 ) => {
 
 
@@ -145,7 +128,7 @@ export const updateTweetController = async (
       error: JSON.stringify(bodyResult.error.flatten().fieldErrors),
     });
   }
-  try {
+ 
     
   const body=bodyResult.data;
   const{tweetId}=paramResult.data;
@@ -160,20 +143,13 @@ export const updateTweetController = async (
       success: true,
       data: tweet,
     });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Something went wrong",
-    });
-  }
-};
+ 
+});
 
-export const deleteTweetController = async (
+export const deleteTweetController = catchAsync(async (
   req: Request,
-  res: Response
+  res: Response,
+  next:NextFunction
 ) => {
 
      const result = tweetIdSchema.safeParse(req.params);
@@ -184,7 +160,7 @@ export const deleteTweetController = async (
       error: JSON.stringify(result.error.flatten().fieldErrors),
     });
   }
-  try {
+
       
 
   const{tweetId}=result.data;
@@ -192,13 +168,5 @@ export const deleteTweetController = async (
     const response = await tweetService.deleteTweet( tweetId);
 
     return res.status(200).json(response);
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Something went wrong",
-    });
-  }
-};
+ 
+});

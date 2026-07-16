@@ -1,15 +1,16 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import {
   paramsSchema,
   querySchema,
   updateQuerySchema,
 } from "../validators/query.validator";
 import { queryService } from "../services/query.service";
+import { catchAsync } from "../utils/catchAsync";
 
 
 
 
-export const createQuery = async (req: Request, res: Response) => {
+export const createQuery =catchAsync( async (req: Request, res: Response,next:NextFunction) => {
   const bodyResult = querySchema.safeParse(req.body);
 
   if (!bodyResult.success) {
@@ -24,7 +25,7 @@ export const createQuery = async (req: Request, res: Response) => {
   
   
 
-  try {
+
     const response = await queryService.createQuery(query);
    
 
@@ -33,18 +34,12 @@ export const createQuery = async (req: Request, res: Response) => {
       message: "Query created successfully",
       data: response,
     });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error,
-    });
-  }
-};
-
-export const getQueries = async (req: Request, res: Response) => {
  
-  try {
+});
+
+export const getQueries =catchAsync( async (req: Request, res: Response,next:NextFunction) => {
+ 
+ 
     const response = await queryService.getQueries();
     if (!response) {
       return res.status(404).json({
@@ -58,17 +53,10 @@ export const getQueries = async (req: Request, res: Response) => {
       message: "Queries fetched successfully",
       data: response,
     });
-  } catch (error) {
-    console.error("Internal server error: ", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error,
-    });
-  }
-};
+  
+});
 
-export const updateQuery = async (req: Request, res: Response) => {
+export const updateQuery =catchAsync( async (req: Request, res: Response,next:NextFunction) => {
   const paramResult = paramsSchema.safeParse(req.params);
   const bodyResult = updateQuerySchema.safeParse(req.body);
 
@@ -92,7 +80,7 @@ export const updateQuery = async (req: Request, res: Response) => {
   const { active } = bodyResult.data;
 
  
-  try {
+
     const response = await queryService.updateQuery(queryId,  active);
 
     if (!response) {
@@ -107,17 +95,10 @@ export const updateQuery = async (req: Request, res: Response) => {
       message: "Query updated successfully",
       data: response,
     });
-  } catch (error) {
-    console.error("Internal server error: ", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error,
-    });
-  }
-};
+ 
+});
 
-export const deleteQuery = async (req: Request, res: Response) => {
+export const deleteQuery =catchAsync( async (req: Request, res: Response,next:NextFunction) => {
   const paramResult = paramsSchema.safeParse(req.params);
 
   if (!paramResult.success) {
@@ -131,7 +112,7 @@ export const deleteQuery = async (req: Request, res: Response) => {
   const { id: queryId } = paramResult.data;
 
   
-  try {
+
     const response = await queryService.deleteQuery(queryId);
 
     if (!response) {
@@ -146,12 +127,5 @@ export const deleteQuery = async (req: Request, res: Response) => {
       message: "Query deleted successfully",
       data: response,
     });
-  } catch (error) {
-    console.error("Internal server error: ", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error,
-    });
-  }
-};
+ 
+});

@@ -21,6 +21,13 @@ if(error instanceof AppError){
     });
   }
 
+  // neon db unique constraint error handling
+  if ((error as any).code === "23505") {
+    return res.status(409).json({ 
+      success: false,
+      message: "Data already exists..",
+    });
+  }
 
    // Unknown Error
   console.error(error);

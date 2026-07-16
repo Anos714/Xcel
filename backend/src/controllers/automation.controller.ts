@@ -1,9 +1,11 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { runAutomation } from "../services/automation.service";
+import { catchAsync } from "../utils/catchAsync.js";
+import AppError from "../utils/AppError.js";
 
-export const automation = async (req: Request, res: Response) => {
+export const automation = catchAsync(async (req: Request, res: Response,next:NextFunction) => {
  
-  try {
+
     const response = await runAutomation();
 
     return res.status(200).json({
@@ -11,12 +13,7 @@ export const automation = async (req: Request, res: Response) => {
       message: "Automation completed successfully",
       data: response,
     });
-  } catch (error) {
-    console.error("Automation controller error:", error);
 
-    return res.status(500).json({
-      success: false,
-      message: "Failed to run automation",
-    });
-  }
-};
+    
+
+});
