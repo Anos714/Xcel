@@ -4,6 +4,7 @@ import { db } from "../db";
 import { tweets } from "../db/schema";
 import { and, asc, eq } from "drizzle-orm";
 import { postTweet } from "../services/buffer.service";
+import { logger } from "../lib/logger";
 
 type PostingJob = {
   tweetId?: string;
@@ -12,13 +13,13 @@ type PostingJob = {
 export const postingWorker = new Worker<PostingJob>(
   "posting",
   async (job) => {
-    console.log("Posting Worker Started");
+   logger.info("Posting Worker Started");
 
     let tweet;
 
    //manual flow
     if (job.data?.tweetId) {
-      console.log("Manual Tweet");
+      logger.info("Manual Tweet");
 
       const [result] = await db
         .select()
@@ -31,7 +32,7 @@ export const postingWorker = new Worker<PostingJob>(
 
     //automation flow
     else {
-      console.log("Automation Tweet");
+      logger.info("Automation Tweet");
 
       const [result] = await db
         .select()
@@ -49,19 +50,19 @@ export const postingWorker = new Worker<PostingJob>(
     }
 
     if (!tweet) {
-      console.log("No tweet found");
+      logger.info("No tweet found");
       return;
     }
 
     try {
-      console.log("📝 Posting Tweet:", tweet.content);
+      logger.info({content: tweet.content},"Posting Tweet");
 
       const bufferResponse = await postTweet(
         tweet.content,
         tweet.hashtags ?? []
       );
 
-      console.log("Buffer Response:", bufferResponse);
+      logger.info({bufferResponse:bufferResponse},"Buffer Response");
 
       await db
         .update(tweets)
@@ -71,14 +72,14 @@ export const postingWorker = new Worker<PostingJob>(
         })
         .where(eq(tweets.id, tweet.id));
 
-      console.log("✅ Tweet Posted");
+      logger.info("Tweet Posted");
 
       return {
         success: true,
         tweetId: tweet.id,
       };
     } catch (error) {
-      console.error("Posting Error:", error);
+      logger.error(error,"Posting Error" );
 
       await db
         .update(tweets)
@@ -96,9 +97,9 @@ export const postingWorker = new Worker<PostingJob>(
 );
 
 postingWorker.on("completed", (job) => {
-  console.log(`Posting Job ${job.id} completed`);
+  logger.info(`Posting Job ${job.id} completed`);
 });
 
 postingWorker.on("failed", (job, err) => {
-  console.error(`Posting Job ${job?.id} failed`, err);
+ logger.error(err,`Posting Job ${job?.id} failed`);
 });

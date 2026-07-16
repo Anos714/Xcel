@@ -1,5 +1,6 @@
 import { z } from "zod";
 import "dotenv/config";
+import { logger } from "../lib/logger";
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(8080),
@@ -18,7 +19,7 @@ const envSchema = z.object({
 
 const envParse = envSchema.safeParse(process.env);
 if (!envParse.success) {
-  console.error("Error parsing environment variables", envParse.error.issues);
+  logger.error(envParse.error.issues,"Error parsing environment variables");
   process.exit(1);
 }
 

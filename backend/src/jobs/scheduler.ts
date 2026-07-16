@@ -3,6 +3,7 @@ import { postingQueue } from "../queues/posting.queue";
 import { db } from "../db";
 import { settings } from "../db/schema";
 import { createDefaultSetting } from "../services/settings.service";
+import { logger } from "../lib/logger.js";
 
 export const registerAutomationScheduler = async () => {
   await automationQueue.upsertJobScheduler(
@@ -19,7 +20,7 @@ export const registerAutomationScheduler = async () => {
     }
   );
 
-  console.log("Automation scheduler registered");
+  logger.info("Automation scheduler registered");
 };
 
 export const registerPostingSchedulers = async () => {
@@ -29,7 +30,7 @@ export const registerPostingSchedulers = async () => {
   let generatedSettings=appSettings;
   if (!appSettings) {
    generatedSettings=await createDefaultSetting()
-    console.log("✅ Default settings created");
+   logger.info("Default settings created");
     
   }
 
@@ -50,11 +51,11 @@ export const registerPostingSchedulers = async () => {
     );
   }
 
-  console.log("Posting schedulers registered");
+  logger.info("Posting schedulers registered");
 };
 
 export const removePostingSchedulers = async () => {
-  // Max 10 posting times
+  // Max 15 posting times
   for (let i = 0; i < 15; i++) {
     try {
       await postingQueue.removeJobScheduler(`posting-${i}`);

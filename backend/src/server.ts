@@ -1,6 +1,7 @@
 import app from "./app";
 import { env } from "./config/env";
 import { registerAutomationScheduler, registerPostingSchedulers } from './jobs/scheduler';
+import { logger } from "./lib/logger.js";
 import './workers/automation.worker.js'
 import './workers/posting.worker.js'
 
@@ -9,17 +10,17 @@ const PORT = env.PORT;
 const startServer = async() => {
   
   app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+   logger.info(`Server running at http://localhost:${PORT}`);
   });
 
   await registerAutomationScheduler();
   await registerPostingSchedulers()
 
 
-console.log("Automation Scheduler Registered");
+logger.info("Automation Scheduler Registered");
 };
 
 startServer().catch((err) => {
-  console.error("Failed to start server:", err);
+  logger.error("Failed to start server:", err);
   process.exit(1);
 });

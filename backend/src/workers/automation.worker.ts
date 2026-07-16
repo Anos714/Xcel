@@ -1,17 +1,18 @@
 import { Worker } from "bullmq";
 import { redisClient } from "../config/redis";
 import { runAutomation } from "../services/automation.service";
+import { logger } from "../lib/logger";
 
 
 
 export const automationWorker = new Worker(
   "automation",
   async (job) => {
-    console.log("Automation Worker Started");
+    logger.info("Automation Worker Started");
 
     await runAutomation();
 
-    console.log("Automation Completed");
+    logger.info("Automation Completed");
   },
   {
     connection: redisClient,
@@ -19,9 +20,9 @@ export const automationWorker = new Worker(
 );
 
 automationWorker.on("completed", (job) => {
-  console.log(`Automation Job ${job.id} completed`);
+  logger.info(`Automation Job ${job.id} completed`);
 });
 
 automationWorker.on("failed", (job, err) => {
-  console.error(`Automation Job ${job?.id} failed`, err);
+  logger.error(err,`Automation Job ${job?.id} failed` );
 });
