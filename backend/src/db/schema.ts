@@ -29,8 +29,6 @@ export const queries = pgTable(
       .primaryKey()
       .default(sql`uuidv7()`),
 
-    clerkUserId: text("clerk_user_id").notNull(),
-
     query: text("query").notNull(),
 
     active: boolean("active").default(true).notNull(),
@@ -41,22 +39,13 @@ export const queries = pgTable(
       .defaultNow()
       .$onUpdateFn(() => new Date())
       .notNull(),
-  },
-  (table) => ({
-    clerkUserIdx: index("queries_clerk_user_idx").on(table.clerkUserId),
-    uniqueUserQuery: uniqueIndex("queries_user_query_unique").on(
-      table.clerkUserId,
-      table.query,
-    ),
-  }),
+  }
 );
 
 export const tweets = pgTable(
   "tweets",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-
-    clerkUserId: text("clerk_user_id").notNull(),
 
     content: text("content").notNull(),
 
@@ -78,19 +67,16 @@ export const tweets = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => ({
-    clerkUserIdx: index("tweets_clerk_user_idx").on(table.clerkUserId),
+  (table) => [
 
-    statusIdx: index("tweets_status_idx").on(table.status),
+     index("tweets_status_idx").on(table.status),
 
-    scheduleIdx: index("tweets_schedule_idx").on(table.scheduledFor),
-  }),
+     index("tweets_schedule_idx").on(table.scheduledFor),
+  ],
 );
 
 export const settings = pgTable("settings", {
   id: uuid("id").defaultRandom().primaryKey(),
-
-  clerkUserId: text("clerk_user_id").notNull().unique(),
 
   automationEnabled: boolean("automation_enabled").default(true).notNull(),
 
