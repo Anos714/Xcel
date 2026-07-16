@@ -1,7 +1,6 @@
 import type { Request,Response } from "express";
 import { tweetService } from "../services/tweet.service";
 import { enhanceTweetSchema, getTweetsSchema, tweetIdSchema, tweetSchema, updateTweetSchema } from "../validators/tweet.validator";
-import { getAuth } from "@clerk/express";
 
 
 type EnhanceTweetRes={
@@ -61,19 +60,12 @@ export const createTweet=async(req:Request,res:Response<ScheduleTweetRes>)=>{
 
   }  
 
-  const{isAuthenticated,userId}=getAuth(req)
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+  
 
   const {content,postType,hashtags,scheduledFor}=result.data
   
   try {
-        const tweet=await tweetService.createTweet(userId,content,postType,hashtags,scheduledFor)
+        const tweet=await tweetService.createTweet(content,postType,hashtags,scheduledFor)
         return res.status(200).json({
             success:true,
             message:"Tweet created successfully",
@@ -94,19 +86,11 @@ export const getTweetsController = async (
   res: Response
 ) => {
   try {
-      const{isAuthenticated,userId}=getAuth(req)
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+     
 
     const query = getTweetsSchema.parse(req.query);
 
     const tweets = await tweetService.getTweets(
-      userId,
       query.page,
       query.limit,
       query.status,
@@ -134,21 +118,14 @@ export const updateTweetController = async (
   res: Response
 ) => {
   try {
-     const{isAuthenticated,userId}=getAuth(req)
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+    
 
     const { tweetId } = tweetIdSchema.parse(req.params);
 
     const body = updateTweetSchema.parse(req.body);
 
     const tweet = await tweetService.updateTweet(
-      userId,
+      
       tweetId,
       body
     );
@@ -173,18 +150,10 @@ export const deleteTweetController = async (
   res: Response
 ) => {
   try {
-      const{isAuthenticated,userId}=getAuth(req)
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
-
+      
     const { tweetId } = tweetIdSchema.parse(req.params);
 
-    const response = await tweetService.deleteTweet(userId, tweetId);
+    const response = await tweetService.deleteTweet( tweetId);
 
     return res.status(200).json(response);
   } catch (error) {

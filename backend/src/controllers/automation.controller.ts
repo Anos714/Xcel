@@ -1,15 +1,10 @@
-import { getAuth } from "@clerk/express";
 import type { Request, Response } from "express";
 import { runAutomation } from "../services/automation.service";
 
 export const automation = async (req: Request, res: Response) => {
-  const { isAuthenticated, userId } = getAuth(req);
-
-  if (!isAuthenticated) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+ 
   try {
-    const response = await runAutomation(userId);
+    const response = await runAutomation();
 
     return res.status(200).json({
       success: true,

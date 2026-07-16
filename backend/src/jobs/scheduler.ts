@@ -2,7 +2,7 @@ import { automationQueue } from "../queues/automation.queue";
 import { postingQueue } from "../queues/posting.queue";
 
 
-export const registerAutomationScheduler = async (userId: string) => {
+export const registerAutomationScheduler = async () => {
   await automationQueue.upsertJobScheduler(
     "daily-automation",
     {
@@ -10,9 +10,6 @@ export const registerAutomationScheduler = async (userId: string) => {
     },
     {
       name: "generate-daily-tweets",
-      data: {
-        userId,
-      },
       opts: {
         removeOnComplete: 100,
         removeOnFail: 50,

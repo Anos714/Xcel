@@ -6,9 +6,9 @@ import crypto from "crypto";
 import { searchWeb } from "./tavily.service.js";
 import { generateTweet, type TweetResponse } from "./gemini.service.js";
 
-export const runAutomation = async (userId: string) => {
+export const runAutomation = async () => {
   try {
-    const activeQueries = await getActiveQueries(userId);
+    const activeQueries = await getActiveQueries();
     const randomQueries = pickRandomQueries(activeQueries);
 
     let generatedTweets: TweetResponse[] = [];
@@ -22,7 +22,7 @@ export const runAutomation = async (userId: string) => {
       console.log(tweet);
       
 
-      await savePendingTweet(userId, query, tweet);
+      await savePendingTweet( query, tweet);
 
       generatedTweets.push(tweet);
     }
@@ -34,12 +34,12 @@ export const runAutomation = async (userId: string) => {
   }
 };
 
-export const getActiveQueries = async (userId: string): Promise<string[]> => {
+export const getActiveQueries = async (): Promise<string[]> => {
   try {
     const activeQueries = await db
       .select()
       .from(queries)
-      .where(and(eq(queries.clerkUserId, userId), eq(queries.active, true)));
+      .where(eq(queries.active, true));
 
     if (activeQueries.length === 0) {
       throw new Error("No active queries found");
@@ -72,7 +72,7 @@ export const pickRandomQueries = (queries: string[]): string[] => {
 };
 
 const savePendingTweet = async (
-  userId: string,
+ 
   query: string,
   tweet: TweetResponse,
 ) => {
@@ -80,7 +80,7 @@ const savePendingTweet = async (
     const [savedTweet] = await db
       .insert(tweets)
       .values({
-        clerkUserId: userId,
+        
         query,
         content: tweet.tweetContent,
         hashtags: tweet.hashtags,

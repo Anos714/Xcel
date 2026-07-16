@@ -64,7 +64,7 @@ export type TweetInput=z.infer<typeof tweetSchema>;
 
 
 export const enhanceTweetSchema=z.object({
-     content: z.string({ message: "Content is required" }).max(270, { message: "Content must be under 270 character limit" }),
+     content: z.string({ message: "Content is required" }).max(250, { message: "Content must be under 250 character limit" }),
 })
 
 export const getTweetsSchema = z.object({
@@ -85,7 +85,7 @@ export const updateTweetSchema = z
     content: z
       .string()
       .min(1, "Content is required")
-      .max(280, "Content must be under 280 characters")
+      .max(250, "Content must be under 250 characters")
       .optional(),
 
     hashtags: z.array(z.string()).nullable().optional(),

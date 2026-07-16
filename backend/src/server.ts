@@ -12,7 +12,7 @@ const startServer = async() => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
 
-  await registerAutomationScheduler(env.CLERK_USER_ID);
+  await registerAutomationScheduler();
 
   await registerPostingSchedulers();
 

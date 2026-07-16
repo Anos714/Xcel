@@ -5,7 +5,6 @@ import {
   updateQuerySchema,
 } from "../validators/query.validator";
 import { queryService } from "../services/query.service";
-import { getAuth } from "@clerk/express";
 
 
 
@@ -24,17 +23,10 @@ export const createQuery = async (req: Request, res: Response) => {
 
   const { query } = bodyResult.data;
   
-  const { isAuthenticated, userId } = getAuth(req);
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+  
 
   try {
-    const response = await queryService.createQuery(query, userId);
+    const response = await queryService.createQuery(query);
     if (!response) {
       return res.status(400).json({
         success: false,
@@ -57,16 +49,9 @@ export const createQuery = async (req: Request, res: Response) => {
 };
 
 export const getQueries = async (req: Request, res: Response) => {
-  const { isAuthenticated, userId } = getAuth(req);
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+ 
   try {
-    const response = await queryService.getQueries(userId);
+    const response = await queryService.getQueries();
     if (!response) {
       return res.status(404).json({
         success: false,
@@ -112,16 +97,9 @@ export const updateQuery = async (req: Request, res: Response) => {
   const { id: queryId } = paramResult.data;
   const { active } = bodyResult.data;
 
-  const { isAuthenticated, userId } = getAuth(req);
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+ 
   try {
-    const response = await queryService.updateQuery(queryId, userId, active);
+    const response = await queryService.updateQuery(queryId,  active);
 
     if (!response) {
       return res.status(404).json({
@@ -158,16 +136,9 @@ export const deleteQuery = async (req: Request, res: Response) => {
 
   const { id: queryId } = paramResult.data;
 
-  const { isAuthenticated, userId } = getAuth(req);
-
-  if (!isAuthenticated) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+  
   try {
-    const response = await queryService.deleteQuery(queryId, userId);
+    const response = await queryService.deleteQuery(queryId);
 
     if (!response) {
       return res.status(404).json({

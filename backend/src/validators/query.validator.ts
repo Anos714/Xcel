@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const paramsSchema = z.object({
-  id: z.string().uuid({ message: "Invalid UUID format" }),
+  id: z.string().uuidv7({ message: "Invalid UUID format" }),
 });
 
 const querySchema = z.object({

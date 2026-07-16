@@ -1,4 +1,4 @@
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, } from "drizzle-orm";
 import { ai } from "../config/gemini";
 import { db } from "../db";
 import { tweets } from "../db/schema";
@@ -72,7 +72,7 @@ export const enhanceTweet=async(content:string):Promise<EnhanceTweetRes>=>{
 }
 
 
-export const createTweet=async(userId:string,content:string,postType:"now"|"scheduled",hashtags?:string[],scheduledFor?:Date)=>{
+export const createTweet=async(content:string,postType:"now"|"scheduled",hashtags?:string[],scheduledFor?:Date)=>{
 try {
 
 
@@ -83,7 +83,6 @@ try {
  const [tweet] = await db
   .insert(tweets)
   .values({
-    clerkUserId:userId,
     content: finalContent,
     hashtags,
     type: "custom",
@@ -118,7 +117,6 @@ await postingQueue.add(
 }
 
 export const getTweets = async (
-  userId: string,
   page: number,
   limit: number,
   status?: "draft" | "pending" | "posted" | "failed",
@@ -126,22 +124,22 @@ export const getTweets = async (
 ) => {
   const offset = (page - 1) * limit;
 
-  const conditions = [
-    eq(tweets.clerkUserId, userId),
-  ];
+ 
+
+  let condition;
 
   if (status) {
-    conditions.push(eq(tweets.status, status));
+     condition=eq(tweets.status, status)
   }
 
   if (type) {
-    conditions.push(eq(tweets.type, type));
+     condition=eq(tweets.type, type);
   }
 
   const data = await db
     .select()
     .from(tweets)
-    .where(and(...conditions))
+    .where(condition)
     .orderBy(desc(tweets.createdAt))
     .limit(limit)
     .offset(offset);
@@ -151,7 +149,7 @@ export const getTweets = async (
       total: count(),
     })
     .from(tweets)
-    .where(and(...conditions));
+    .where(and(condition));
 
   return {
     data,
@@ -165,17 +163,14 @@ export const getTweets = async (
 };
 
 export const deleteTweet = async (
-  userId: string,
+  
   tweetId: string
 ) => {
   const [tweet] = await db
     .select()
     .from(tweets)
     .where(
-      and(
-        eq(tweets.id, tweetId),
-        eq(tweets.clerkUserId, userId)
-      )
+     eq(tweets.id, tweetId),
     )
     .limit(1);
 
@@ -209,7 +204,7 @@ export const deleteTweet = async (
 };
 
 export const updateTweet = async (
-  userId: string,
+ 
   tweetId: string,
   updates: Partial<{
     content: string;
@@ -221,10 +216,7 @@ export const updateTweet = async (
     .select()
     .from(tweets)
     .where(
-      and(
-        eq(tweets.id, tweetId),
-        eq(tweets.clerkUserId, userId)
-      )
+      eq(tweets.id, tweetId),
     )
     .limit(1);
 

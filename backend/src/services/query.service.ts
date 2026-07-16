@@ -2,12 +2,11 @@ import { and, eq } from "drizzle-orm";
 import { db } from "../db";
 import { queries } from "../db/schema";
 
-const createQuery = async (queryStr: string, userId: string) => {
+const createQuery = async (queryStr: string,) => {
   try {
     const [data] = await db
       .insert(queries)
       .values({
-        clerkUserId: userId,
         query: queryStr,
       })
       .returning();
@@ -19,12 +18,11 @@ const createQuery = async (queryStr: string, userId: string) => {
   }
 };
 
-const getQueries = async (userId: string) => {
+const getQueries = async () => {
   try {
     const data = await db
       .select()
       .from(queries)
-      .where(eq(queries.clerkUserId, userId));
 
     return data;
   } catch (error) {
@@ -35,7 +33,7 @@ const getQueries = async (userId: string) => {
 
 const updateQuery = async (
   queryId: string,
-  userId: string,
+  
   status: boolean,
 ) => {
   try {
@@ -44,7 +42,7 @@ const updateQuery = async (
       .set({
         active: status,
       })
-      .where(and(eq(queries.id, queryId), eq(queries.clerkUserId, userId)))
+      .where(eq(queries.id, queryId))
       .returning();
 
     return data;
@@ -54,11 +52,11 @@ const updateQuery = async (
   }
 };
 
-const deleteQuery = async (queryId: string, userId: string) => {
+const deleteQuery = async (queryId: string, ) => {
   try {
     const [data] = await db
       .delete(queries)
-      .where(and(eq(queries.id, queryId), eq(queries.clerkUserId, userId)))
+      .where(eq(queries.id, queryId))
       .returning();
 
     return data;

@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { createTweet, enhanceTweet } from "../controllers/tweet.controller.js";
+import { createTweet, deleteTweetController, enhanceTweet, getTweetsController, updateTweetController } from "../controllers/tweet.controller.js";
 
 const router=Router();
 
 router.post('/',createTweet);
 router.post('/enhance',enhanceTweet);
-router.get('/');
-router.delete('/:tweetId');
-router.patch('/:tweetId');
+router.get('/',getTweetsController);
+router.delete('/:tweetId',deleteTweetController);
+router.patch('/:tweetId',updateTweetController);
 
 
 export default router
