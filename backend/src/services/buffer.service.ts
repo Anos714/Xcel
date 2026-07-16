@@ -1,6 +1,7 @@
 import { env } from "../config/env";
 import { db } from "../db";
 import { tweets } from "../db/schema";
+import AppError from "../utils/AppError";
 
 type BufferPost = {
   id: string;
@@ -68,19 +69,19 @@ export const postTweet = async (content: string, hashtags: string[]): Promise<Bu
   const result = (await response.json()) as GraphQLResponse;
 
   if (!response.ok) {
-    throw new Error(`Buffer API Error (${response.status})`);
+    throw new AppError(`Buffer API Error (${response.status})`,502);
   }
 
   if (result.errors?.length) {
-    throw new Error(result.errors[0]?.message);
+    throw new AppError(result.errors[0]?.message||"Something went wrong in buffer api",502);
   }
 
   const post = result.data?.createPost?.post;
 
   if (!post) {
    
-    throw new Error(
-      result.data?.createPost?.message ?? "Failed to create Buffer post.",
+    throw new AppError(
+      result.data?.createPost?.message ?? "Failed to create Buffer post.",502
     );
   }
 

@@ -5,11 +5,11 @@ import { queries } from "../db/schema.js";
 import crypto from "crypto";
 import { searchWeb } from "./tavily.service.js";
 import { generateTweet, type TweetResponse } from "./gemini.service.js";
-import { postingQueue } from "../queues/posting.queue.js";
-import { delay } from "bullmq";
+import AppError from "../utils/AppError.js";
+
 
 export const runAutomation = async () => {
-  try {
+ 
     const activeQueries = await getActiveQueries();
     const randomQueries = pickRandomQueries(activeQueries);
 
@@ -30,30 +30,24 @@ export const runAutomation = async () => {
     
 
     return generatedTweets;
-  } catch (error) {
-    console.error("Error running automation:", error);
-    throw error;
-  }
+
 };
 
 export const getActiveQueries = async (): Promise<string[]> => {
-  try {
+  
     const activeQueries = await db
       .select()
       .from(queries)
       .where(eq(queries.active, true));
 
     if (activeQueries.length === 0) {
-      throw new Error("No active queries found");
+      throw new AppError("No active queries found",404);
     }
 
     const data: string[] = activeQueries.map((aq) => aq.query);
 
     return data;
-  } catch (error) {
-    console.error("Error fetching active queries:", error);
-    throw error;
-  }
+  
 };
 
 export const pickRandomQueries = (queries: string[]): string[] => {
@@ -78,7 +72,7 @@ const savePendingTweet = async (
   query: string,
   tweet: TweetResponse,
 ) => {
-  try {
+ 
     const [savedTweet] = await db
       .insert(tweets)
       .values({
@@ -91,9 +85,10 @@ const savePendingTweet = async (
       })
       .returning();
 
+      if(!savedTweet){
+        throw new AppError("Error while saving tweet",500)
+      }
+
     return savedTweet;
-  } catch (error) {
-    console.error("Error saving pending tweet:", error);
-    throw error;
-  }
+ 
 };

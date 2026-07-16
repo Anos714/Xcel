@@ -4,6 +4,7 @@ import {
   formatSearchResults,
   type SearchResult,
 } from "../utils/formatSearchResults";
+import AppError from "../utils/AppError";
 
 export type TweetResponse = {
   tweetContent: string;
@@ -13,7 +14,7 @@ export type TweetResponse = {
 export const generateTweet = async (
   searchResults: SearchResult[],
 ): Promise<TweetResponse> => {
-  try {
+ 
     const formattedResults = formatSearchResults(searchResults);
     const prompt = generateTweetPrompt(formattedResults);
     const response = await ai.models.generateContent({
@@ -40,7 +41,7 @@ export const generateTweet = async (
     });
 
     if (!response.text) {
-      throw new Error("Gemini returned an empty response");
+      throw new AppError("Gemini returned an empty response",502);
     }
 
     let parsed: unknown;
@@ -48,7 +49,7 @@ export const generateTweet = async (
     try {
       parsed = JSON.parse(response.text);
     } catch {
-      throw new Error("Invalid JSON returned by Gemini.");
+      throw new AppError("Invalid JSON returned by Gemini.",502);
     }
 
     if (
@@ -57,7 +58,7 @@ export const generateTweet = async (
       !("tweetContent" in parsed) ||
       !("hashtags" in parsed)
     ) {
-      throw new Error("Invalid response structure from Gemini.");
+      throw new AppError("Invalid response structure from Gemini.",502);
     }
 
     const result = parsed as TweetResponse;
@@ -66,12 +67,9 @@ export const generateTweet = async (
       typeof result.tweetContent !== "string" ||
       !Array.isArray(result.hashtags)
     ) {
-      throw new Error("Invalid response data types from Gemini.");
+      throw new AppError("Invalid response data types from Gemini.",502);
     }
 
     return result;
-  } catch (error) {
-    console.error("Error generating tweet:", error);
-    throw error;
-  }
+ 
 };

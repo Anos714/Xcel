@@ -2,23 +2,19 @@ import { db } from "../db"
 import { settings } from "../db/schema.js"
 import { eq } from "drizzle-orm";
 import { registerPostingSchedulers } from "../jobs/scheduler.js";
+import AppError from "../utils/AppError.js";
 
 
  export const createDefaultSetting=async()=>{
-    try {
+   
         const [result]=await db.insert(settings).values({}).returning();
-          if(!result){
-            throw new Error("Error when creating default settings");
-        }
+         
         return result;
-    } catch (error) {
-         console.error("Database create error:", error);
-    throw error; 
-    }
+  
 }
 
 export const getSettings=async()=>{
-    try {
+   
 
        
         const [result]=await db.select().from(settings)
@@ -31,10 +27,7 @@ export const getSettings=async()=>{
        
 
         return result;
-    } catch (error) {
-         console.error("Database fetch error:", error);
-    throw error; 
-    }
+   
 }
 
 
@@ -47,7 +40,7 @@ export const updateSettings = async (
     timezone?: string | null;
   }>
 ) => {
-  try {
+ 
     const updateData: Record<string, any> = {};
     
     if (updates.automationEnabled !== undefined) updateData.automationEnabled = updates.automationEnabled;
@@ -55,10 +48,13 @@ export const updateSettings = async (
     if (updates.timezone !== undefined) updateData.timezone = updates.timezone;
 
     if (Object.keys(updateData).length === 0) {
-      throw new Error("Update karne ke liye koi data nahi bhejaj gaya");
+throw new AppError("No data provided for update", 400);
     }
 
-    const currentSettings=await getSettings()
+    const currentSettings=await getSettings();
+     if (!currentSettings) {
+    throw new AppError("Failed to initialize or retrieve settings", 500);
+  }
 
     const [result] = await db
       .update(settings)
@@ -66,20 +62,15 @@ export const updateSettings = async (
       .where(eq(settings.id, currentSettings.id)) 
       .returning(); 
 
-     if(!result){
-    throw new Error("Settings not found")
-}
+    
 
 // Posting times changed
-  if (updates.postingTimes) {
+  if (updates.postingTimes !== undefined) {
     await registerPostingSchedulers();
   }
 
     return result;
-  } catch (error) {
-    console.error("Database update error:", error);
-    throw error; 
-  }
+ 
 };
 
 

@@ -5,13 +5,14 @@ import { tweets } from "../db/schema";
 import { enhanceTweetPrompt } from "../prompts/generateTweet.prompt";
 import { postTweet } from "./buffer.service";
 import { postingQueue } from "../queues/posting.queue";
+import AppError from "../utils/AppError";
 
 export type EnhanceTweetRes={
     content:string
 }
 
 export const enhanceTweet=async(content:string):Promise<EnhanceTweetRes>=>{
-    try {
+    
         const prompt = enhanceTweetPrompt(content);
 
          const response = await ai.models.generateContent({
@@ -33,7 +34,7 @@ export const enhanceTweet=async(content:string):Promise<EnhanceTweetRes>=>{
             });
 
              if (!response.text) {
-                  throw new Error("Gemini returned an empty response");
+                  throw new AppError("Gemini returned an empty response",502);
                 }
             
                 let parsed: unknown;
@@ -41,7 +42,7 @@ export const enhanceTweet=async(content:string):Promise<EnhanceTweetRes>=>{
                 try {
                   parsed = JSON.parse(response.text);
                 } catch {
-                  throw new Error("Invalid JSON returned by Gemini.");
+                  throw new AppError("Invalid JSON returned by Gemini",502);
                 }
             
                 if (
@@ -49,7 +50,7 @@ export const enhanceTweet=async(content:string):Promise<EnhanceTweetRes>=>{
                   parsed === null ||
                   !("content" in parsed) 
                 ) {
-                  throw new Error("Invalid response structure from Gemini.");
+                  throw new AppError("Invalid response structure from Gemini",502);
                 }
             
                 const result = parsed as EnhanceTweetRes;
@@ -57,23 +58,20 @@ export const enhanceTweet=async(content:string):Promise<EnhanceTweetRes>=>{
                 if (
                   typeof result.content !== "string" 
                 ) {
-                  throw new Error("Invalid response data types from Gemini.");
+                  throw new AppError("Invalid response data types from Gemini.",502);
                 }
             
                 return result;
             
         
     
-    } catch (error) {
-        console.error("Error generating tweet:", error);
-    throw error;
-    }
+   
 
 }
 
 
 export const createTweet=async(content:string,postType:"now"|"scheduled",hashtags?:string[],scheduledFor?:Date)=>{
-try {
+
 
 
   const finalContent =
@@ -92,7 +90,7 @@ try {
   .returning();
 
   if(!tweet){
-    throw new Error("Tweet creation failed")
+    throw new AppError("Tweet creation failed",500)
   }
 
  const options =
@@ -113,11 +111,7 @@ await postingQueue.add(
 );
   return tweet
   
-} catch (error) {
-  console.error("Error while creating tweet");
-  throw error;
-  
-}
+
 }
 
 export const getTweets = async (
@@ -179,15 +173,15 @@ export const deleteTweet = async (
     .limit(1);
 
   if (!tweet) {
-    throw new Error("Tweet not found.");
+    throw new AppError("Tweet not found.",404);
   }
 
   if (tweet.type !== "custom") {
-    throw new Error("Automation tweets cannot be deleted.");
+    throw new AppError("Automation tweets cannot be deleted.",400);
   }
 
   if (tweet.status === "posted") {
-    throw new Error("Posted tweets cannot be deleted.");
+    throw new AppError("Posted tweets cannot be deleted.",400);
   }
 
   // Remove scheduled/immediate pending job if it exists
@@ -197,14 +191,11 @@ export const deleteTweet = async (
     await job.remove();
   }
 
-  await db
+  const [deletedTweet]=await db
     .delete(tweets)
-    .where(eq(tweets.id, tweet.id));
+    .where(eq(tweets.id, tweet.id)).returning();
 
-  return {
-    success: true,
-    message: "Tweet deleted successfully.",
-  };
+  return deletedTweet;
 };
 
 export const updateTweet = async (
@@ -240,7 +231,7 @@ export const updateTweet = async (
     updates.scheduledFor &&
     updates.scheduledFor.getTime() <= Date.now()
   ) {
-    throw new Error("Scheduled time must be in the future.");
+    throw new AppError("Scheduled time must be in the future.",400);
   }
 
   const content = updates.content ?? tweet.content;

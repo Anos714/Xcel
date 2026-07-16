@@ -4,7 +4,7 @@ import { queries, tweets } from "../db/schema.js";
 
 export const getDashboardInfo = async () => {
 
-    try {
+ 
         
     
   const [
@@ -90,11 +90,7 @@ export const getDashboardInfo = async () => {
     recentTweets,
     upcomingTweets,
   };
-  } catch (error) {
-        console.error("Error while getting dashbaord info",error);
-        throw error
-        
-    }
+
 };
 
 export const dashboardService={getDashboardInfo}
