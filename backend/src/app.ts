@@ -4,6 +4,7 @@ import automationRouter from "./routes/automation.routes.js";
 import tweetRouter from './routes/tweet.route.js'
 import settingRouter from './routes/settings.route.js'
 import dashboardRouter from './routes/dashboard.route.js'
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -22,6 +23,9 @@ app.use("/api/v1/automation", automationRouter);
 app.use("/api/v1/tweets", tweetRouter);
 app.use("/api/v1/settings",settingRouter);
 app.use("/api/v1/dashboard",dashboardRouter)
+
+// error middleware
+app.use(errorHandler);
 
 
 export default app;
