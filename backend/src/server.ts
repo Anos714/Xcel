@@ -13,10 +13,13 @@ const startServer = async() => {
   });
 
   await registerAutomationScheduler();
+  await registerPostingSchedulers()
 
-  await registerPostingSchedulers();
 
-  console.log("✅ Schedulers Registered");
+console.log("Automation Scheduler Registered");
 };
 
-startServer();
+startServer().catch((err) => {
+  console.error("Failed to start server:", err);
+  process.exit(1);
+});

@@ -1,10 +1,10 @@
-import type { ZodUUID } from "zod";
 import { db } from "../db"
 import { settings } from "../db/schema.js"
 import { eq } from "drizzle-orm";
+import { registerPostingSchedulers } from "../jobs/scheduler.js";
 
 
- const createDefaultSetting=async()=>{
+ export const createDefaultSetting=async()=>{
     try {
         const [result]=await db.insert(settings).values({}).returning();
           if(!result){
@@ -69,6 +69,11 @@ export const updateSettings = async (
      if(!result){
     throw new Error("Settings not found")
 }
+
+// Posting times changed
+  if (updates.postingTimes) {
+    await registerPostingSchedulers();
+  }
 
     return result;
   } catch (error) {

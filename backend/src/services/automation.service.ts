@@ -5,6 +5,8 @@ import { queries } from "../db/schema.js";
 import crypto from "crypto";
 import { searchWeb } from "./tavily.service.js";
 import { generateTweet, type TweetResponse } from "./gemini.service.js";
+import { postingQueue } from "../queues/posting.queue.js";
+import { delay } from "bullmq";
 
 export const runAutomation = async () => {
   try {
@@ -15,17 +17,17 @@ export const runAutomation = async () => {
 
     for (const query of randomQueries) {
       const searchResults = await searchWeb(query);
-      console.log(searchResults);
       
 
       const tweet = await generateTweet(searchResults);
-      console.log(tweet);
       
 
       await savePendingTweet( query, tweet);
 
       generatedTweets.push(tweet);
     }
+
+    
 
     return generatedTweets;
   } catch (error) {

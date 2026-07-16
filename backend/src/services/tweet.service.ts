@@ -100,7 +100,9 @@ try {
     ? {
         delay: scheduledFor!.getTime() - Date.now(),
       }
-    : {};
+    : {
+      jobId:tweet.id
+    };
 
 await postingQueue.add(
   "post-tweet",
@@ -112,6 +114,8 @@ await postingQueue.add(
   return tweet
   
 } catch (error) {
+  console.error("Error while creating tweet");
+  throw error;
   
 }
 }

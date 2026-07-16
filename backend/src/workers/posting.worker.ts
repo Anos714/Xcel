@@ -2,105 +2,103 @@ import { Worker } from "bullmq";
 import { redisClient } from "../config/redis";
 import { db } from "../db";
 import { tweets } from "../db/schema";
-import { and, eq, asc } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { postTweet } from "../services/buffer.service";
 
-export const postingWorker = new Worker(
+type PostingJob = {
+  tweetId?: string;
+};
+
+export const postingWorker = new Worker<PostingJob>(
   "posting",
   async (job) => {
-      console.log("Posting Worker Started");
+    console.log("Posting Worker Started");
 
- let tweet;
+    let tweet;
 
-  //  manual flow
+   //manual flow
     if (job.data?.tweetId) {
-      console.log("📌 Manual Tweet");
+      console.log("Manual Tweet");
 
-      const result = await db
+      const [result] = await db
         .select()
         .from(tweets)
         .where(eq(tweets.id, job.data.tweetId))
         .limit(1);
 
-      tweet = result[0];
+      tweet = result;
     }
 
-
-   //automation flow
+    //automation flow
     else {
-      console.log("🤖 Automation Tweet");
+      console.log("Automation Tweet");
 
-      const result = await db
+      const [result] = await db
         .select()
         .from(tweets)
         .where(
           and(
             eq(tweets.status, "pending"),
-            eq(tweets.type, "automation"),
-          ),
+            eq(tweets.type, "automation")
+          )
         )
         .orderBy(asc(tweets.createdAt))
         .limit(1);
 
-      tweet = result[0];
+      tweet = result;
     }
-
-  
 
     if (!tweet) {
       console.log("No tweet found");
       return;
     }
 
-   
+    try {
+      console.log("📝 Posting Tweet:", tweet.content);
 
-    try{
-         console.log("📝 Posting Tweet:", tweet.content);
+      const bufferResponse = await postTweet(
+        tweet.content,
+        tweet.hashtags ?? []
+      );
 
+      console.log("Buffer Response:", bufferResponse);
 
-    const bufferResponse = await postTweet(tweet.content,tweet.hashtags||[]);
+      await db
+        .update(tweets)
+        .set({
+          status: "posted",
+          postedAt: new Date(),
+        })
+        .where(eq(tweets.id, tweet.id));
 
-      console.log("📤 Buffer Response:", bufferResponse);
+      console.log("✅ Tweet Posted");
 
-    await db
-      .update(tweets)
-      .set({
-        status: "posted",
-        postedAt: new Date(),
-      })
-      .where(eq(tweets.id, tweet.id));
+      return {
+        success: true,
+        tweetId: tweet.id,
+      };
+    } catch (error) {
+      console.error("Posting Error:", error);
 
-       console.log("✅ Tweet Posted");
+      await db
+        .update(tweets)
+        .set({
+          status: "failed",
+        })
+        .where(eq(tweets.id, tweet.id));
 
-    return {
-      success: true,
-      tweetId: tweet.id,
-    };
-  } catch (error) {
-    console.error("Posting worker error:", error);
-
-    await db
-      .update(tweets)
-      .set({
-        status: "failed",
-      })
-      .where(eq(tweets.id, tweet.id));
-
-    return {
-      success: false,
-      tweetId: tweet.id,
-    };
-  }
+      throw error;
+    }
   },
   {
     connection: redisClient,
-  },
+  }
 );
 
 postingWorker.on("completed", (job) => {
-  console.log(`Posting job ${job.id} completed`);
+  console.log(`Posting Job ${job.id} completed`);
 });
 
-postingWorker.on("failed", (job, error) => {
-  console.error(`Posting job ${job?.id} failed`, error);
+postingWorker.on("failed", (job, err) => {
+  console.error(`Posting Job ${job?.id} failed`, err);
 });

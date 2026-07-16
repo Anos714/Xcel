@@ -2,17 +2,14 @@ import { Worker } from "bullmq";
 import { redisClient } from "../config/redis";
 import { runAutomation } from "../services/automation.service";
 
-type AutomationJob = {
-  userId: string;
-};
 
-export const automationWorker = new Worker<AutomationJob>(
+
+export const automationWorker = new Worker(
   "automation",
   async (job) => {
     console.log("Automation Worker Started");
-    console.log(job.data);
 
-    await runAutomation(job.data.userId);
+    await runAutomation();
 
     console.log("Automation Completed");
   },
