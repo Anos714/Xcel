@@ -48,7 +48,7 @@ export const queries = pgTable(
 export const tweets = pgTable(
   "tweets",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
+    id: uuid("id").primaryKey().default(sql`uuidv7()`),
 
     content: text("content").notNull(),
 
@@ -79,8 +79,9 @@ export const tweets = pgTable(
 );
 
 export const settings = pgTable("settings", {
-  id: uuid("id").defaultRandom().primaryKey(),
-
+ id: uuid("id")
+      .primaryKey()
+      .default(sql`uuidv7()`),
   automationEnabled: boolean("automation_enabled").default(true).notNull(),
 
   postingTimes: jsonb("posting_times")
