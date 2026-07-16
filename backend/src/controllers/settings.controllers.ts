@@ -1,17 +1,20 @@
 import type { NextFunction, Request, Response } from "express";
-import { settingService } from "../services/settings.service";
+import { settingService } from "../services/settings.service.js";
 import {  updateSettingsSchema } from "../validators/settings.validator.js";
 import { catchAsync } from "../utils/catchAsync.js";
+import { sendResponse } from "../utils/sendResponse.js";
 
 export const getSettings=catchAsync( async(req:Request,res:Response,next:NextFunction)=>{
    
         const response=await settingService.getSettings();
 
-        return res.status(200).json({
-            success:true,
-            message:"Settings fetched successfully",
-            settings:response
-        })
+        return sendResponse(
+    res, 
+    200, 
+    "Settings fetched successfully", 
+    response 
+);
+
   
 })
 
@@ -38,10 +41,11 @@ export const updateSettings=catchAsync(async(req:Request,res:Response,next:NextF
   
         const response=await settingService.updateSettings(data);
 
-        return res.status(200).json({
-            success:true,
-            message:"Settings updated successfully",
-            settings:response
-        })
+        return sendResponse(
+    res, 
+    200, 
+    "Settings updated successfully", 
+    response 
+);
   
 })

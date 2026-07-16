@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { dashboardService } from "../services/dashboard.service";
+import { dashboardService } from "../services/dashboard.service.js";
 import { catchAsync } from "../utils/catchAsync.js";
+import { sendResponse } from "../utils/sendResponse.js";
 
 
 
@@ -8,10 +9,12 @@ export const getDashboardInfo=catchAsync(async(req:Request,res:Response,next:Nex
 
     const response=await dashboardService.getDashboardInfo();
 
-    return res.status(200).json({
-        success:true,
-        message:"dashboard info retrieved successfully",
-        data:response
-    })
+   return sendResponse(
+    res, 
+    200, 
+    "dashboard info retrieved successfully", 
+    response
+);
+
 
 })

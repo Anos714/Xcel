@@ -3,9 +3,10 @@ import {
   paramsSchema,
   querySchema,
   updateQuerySchema,
-} from "../validators/query.validator";
-import { queryService } from "../services/query.service";
-import { catchAsync } from "../utils/catchAsync";
+} from "../validators/query.validator.js";
+import { queryService } from "../services/query.service.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { sendResponse } from "../utils/sendResponse.js";
 
 
 
@@ -29,11 +30,13 @@ export const createQuery =catchAsync( async (req: Request, res: Response,next:Ne
     const response = await queryService.createQuery(query);
    
 
-    return res.status(201).json({
-      success: true,
-      message: "Query created successfully",
-      data: response,
-    });
+    return sendResponse(
+    res, 
+    201, 
+    "Query created successfully", 
+    response
+);
+
  
 });
 
@@ -42,17 +45,20 @@ export const getQueries =catchAsync( async (req: Request, res: Response,next:Nex
  
     const response = await queryService.getQueries();
     if (!response) {
-      return res.status(404).json({
-        success: false,
-        message: "Failed to fetch queries",
-      });
+      return sendResponse(
+    res, 
+    404, 
+    "Failed to fetch queries"
+);
+
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Queries fetched successfully",
-      data: response,
-    });
+   return sendResponse(
+    res, 
+    200, 
+    "Queries fetched successfully", 
+    response
+);
   
 });
 
@@ -84,17 +90,19 @@ export const updateQuery =catchAsync( async (req: Request, res: Response,next:Ne
     const response = await queryService.updateQuery(queryId,  active);
 
     if (!response) {
-      return res.status(404).json({
-        success: false,
-        message: "Failed to update query",
-      });
+      return sendResponse(
+        res,
+        404,
+        "Failed to update query",
+      )
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Query updated successfully",
-      data: response,
-    });
+   return sendResponse(
+    res, 
+    200, 
+    "Query updated successfully", 
+    response
+);
  
 });
 
@@ -116,16 +124,18 @@ export const deleteQuery =catchAsync( async (req: Request, res: Response,next:Ne
     const response = await queryService.deleteQuery(queryId);
 
     if (!response) {
-      return res.status(404).json({
-        success: false,
-        message: "Failed to delete query",
-      });
+      return sendResponse(
+        res,
+        404,
+        "Failed to delete query",
+      )
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Query deleted successfully",
-      data: response,
-    });
+    return sendResponse(
+        res,
+        200,
+        "Query deleted successfully",
+        response
+    );
  
 });
