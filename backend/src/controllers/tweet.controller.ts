@@ -85,11 +85,20 @@ export const getTweetsController = async (
   req: Request,
   res: Response
 ) => {
+
+     const result = getTweetsSchema.safeParse(req.query);
+     if (!result.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid request body",
+      error: JSON.stringify(result.error.flatten().fieldErrors),
+    });
+  }
+   
   try {
-     
-
-    const query = getTweetsSchema.parse(req.query);
-
+    
+   
+    const query=result.data;
     const tweets = await tweetService.getTweets(
       query.page,
       query.limit,
@@ -117,12 +126,29 @@ export const updateTweetController = async (
   req: Request,
   res: Response
 ) => {
+
+
+  const paramResult = tweetIdSchema.safeParse(req.params);
+     if (!paramResult.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid request body",
+      error: JSON.stringify(paramResult.error.flatten().fieldErrors),
+    });
+  }
+
+    const bodyResult = updateTweetSchema.safeParse(req.body);
+     if (!bodyResult.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid request body",
+      error: JSON.stringify(bodyResult.error.flatten().fieldErrors),
+    });
+  }
   try {
     
-
-    const { tweetId } = tweetIdSchema.parse(req.params);
-
-    const body = updateTweetSchema.parse(req.body);
+  const body=bodyResult.data;
+  const{tweetId}=paramResult.data;
 
     const tweet = await tweetService.updateTweet(
       
@@ -149,9 +175,19 @@ export const deleteTweetController = async (
   req: Request,
   res: Response
 ) => {
+
+     const result = tweetIdSchema.safeParse(req.params);
+     if (!result.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid request body",
+      error: JSON.stringify(result.error.flatten().fieldErrors),
+    });
+  }
   try {
       
-    const { tweetId } = tweetIdSchema.parse(req.params);
+
+  const{tweetId}=result.data;
 
     const response = await tweetService.deleteTweet( tweetId);
 

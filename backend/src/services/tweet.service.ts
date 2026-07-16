@@ -257,7 +257,6 @@ export const updateTweet = async (
       content: finalContent,
       hashtags,
       scheduledFor,
-      updatedAt: new Date(),
     })
     .where(eq(tweets.id, tweetId))
     .returning();

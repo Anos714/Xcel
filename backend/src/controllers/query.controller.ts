@@ -11,7 +11,6 @@ import { queryService } from "../services/query.service";
 
 export const createQuery = async (req: Request, res: Response) => {
   const bodyResult = querySchema.safeParse(req.body);
-  console.log(req.headers.authorization);
 
   if (!bodyResult.success) {
     return res.status(400).json({
@@ -27,19 +26,14 @@ export const createQuery = async (req: Request, res: Response) => {
 
   try {
     const response = await queryService.createQuery(query);
-    if (!response) {
-      return res.status(400).json({
-        success: false,
-        message: "Failed to create query",
-      });
-    }
+   
 
     return res.status(201).json({
       success: true,
       message: "Query created successfully",
-      data: res,
+      data: response,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -82,7 +76,7 @@ export const updateQuery = async (req: Request, res: Response) => {
     return res.status(400).json({
       success: false,
       message: "Invalid URL parameters",
-      error: bodyResult.error.flatten().fieldErrors,
+      error: JSON.stringify(bodyResult.error.flatten().fieldErrors,null,2),
     });
   }
 
