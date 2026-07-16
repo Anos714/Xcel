@@ -13,11 +13,11 @@ type PostingJob = {
 export const postingWorker = new Worker<PostingJob>(
   "posting",
   async (job) => {
-   logger.info("Posting Worker Started");
+    logger.info("Posting Worker Started");
 
     let tweet;
 
-   //manual flow
+    //manual flow
     if (job.data?.tweetId) {
       logger.info("Manual Tweet");
 
@@ -37,12 +37,7 @@ export const postingWorker = new Worker<PostingJob>(
       const [result] = await db
         .select()
         .from(tweets)
-        .where(
-          and(
-            eq(tweets.status, "pending"),
-            eq(tweets.type, "automation")
-          )
-        )
+        .where(and(eq(tweets.status, "pending"), eq(tweets.type, "automation")))
         .orderBy(asc(tweets.createdAt))
         .limit(1);
 
@@ -55,14 +50,14 @@ export const postingWorker = new Worker<PostingJob>(
     }
 
     try {
-      logger.info({content: tweet.content},"Posting Tweet");
+      logger.info({ content: tweet.content }, "Posting Tweet");
 
       const bufferResponse = await postTweet(
         tweet.content,
-        tweet.hashtags ?? []
+        tweet.hashtags ?? [],
       );
 
-      logger.info({bufferResponse:bufferResponse},"Buffer Response");
+      logger.info({ bufferResponse: bufferResponse }, "Buffer Response");
 
       await db
         .update(tweets)
@@ -79,7 +74,7 @@ export const postingWorker = new Worker<PostingJob>(
         tweetId: tweet.id,
       };
     } catch (error) {
-      logger.error(error,"Posting Error" );
+      logger.error(error, "Posting Error");
 
       await db
         .update(tweets)
@@ -93,7 +88,7 @@ export const postingWorker = new Worker<PostingJob>(
   },
   {
     connection: redisClient,
-  }
+  },
 );
 
 postingWorker.on("completed", (job) => {
@@ -101,5 +96,5 @@ postingWorker.on("completed", (job) => {
 });
 
 postingWorker.on("failed", (job, err) => {
- logger.error(err,`Posting Job ${job?.id} failed`);
+  logger.error(err, `Posting Job ${job?.id} failed`);
 });
