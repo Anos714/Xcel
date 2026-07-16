@@ -39,7 +39,10 @@ export const queries = pgTable(
       .defaultNow()
       .$onUpdateFn(() => new Date())
       .notNull(),
-  }
+  },
+  (table) => [
+    uniqueIndex("queries_query_unique").on(table.query)
+  ]
 );
 
 export const tweets = pgTable(
