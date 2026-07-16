@@ -4,7 +4,7 @@ import { logger } from "../lib/logger";
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(8080),
-  NODE_ENV: z.string().default("development"),
+NODE_ENV: z.string().default("development"),
 
   DATABASE_URL: z.string().url(),
 

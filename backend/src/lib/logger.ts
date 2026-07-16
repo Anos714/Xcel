@@ -1,11 +1,20 @@
-import pino, { transport } from 'pino';
-import {env} from '../config/env.js';
+import pino from 'pino';
+
+const isProduction = process.env.NODE_ENV === "production";
 
 export const logger=pino({
-    level:env.NODE_ENV==="production"?"info":"debug",
+    level:isProduction?"info":"debug",
+
+    serializers: {
+        err: pino.stdSerializers.err,    
+        error: pino.stdSerializers.err,   
+    },
+
+    
+    base: isProduction ? { app: "Xcel-backend" } : undefined,
 
     transport:
-    env.NODE_ENV==="production"?undefined:{
+    isProduction?undefined:{
         target:"pino-pretty",
         options:{
             colorize:true,
