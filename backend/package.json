@@ -20,7 +20,6 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@clerk/express": "^2.1.37",
     "@google/genai": "^2.10.0",
     "@neondatabase/serverless": "^1.1.0",
     "@tavily/core": "^0.7.6",
