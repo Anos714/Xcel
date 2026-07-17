@@ -1,14 +1,22 @@
 import express, { type Request, type Response } from "express";
+import cors from "cors";
 import queryRouter from "./routes/query.route.js";
 import automationRouter from "./routes/automation.routes.js";
-import tweetRouter from './routes/tweet.route.js'
-import settingRouter from './routes/settings.route.js'
-import dashboardRouter from './routes/dashboard.route.js'
+import tweetRouter from "./routes/tweet.route.js";
+import settingRouter from "./routes/settings.route.js";
+import dashboardRouter from "./routes/dashboard.route.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { env } from "./config/env.js";
 
 const app = express();
 
 // middlewares
+app.use(
+  cors({
+    origin: env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -21,11 +29,10 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/v1/queries", queryRouter);
 app.use("/api/v1/automation", automationRouter);
 app.use("/api/v1/tweets", tweetRouter);
-app.use("/api/v1/settings",settingRouter);
-app.use("/api/v1/dashboard",dashboardRouter)
+app.use("/api/v1/settings", settingRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 // error middleware
 app.use(errorHandler);
-
 
 export default app;
