@@ -18,6 +18,7 @@
 Branch Purpose
 
 ---
+
 ```
 main Stable releases
 develop Integration branch
@@ -115,6 +116,51 @@ Create hooks for: - Dashboard - Tweets - Queries - Settings - Automation
 9.  refactor: improve component structure
 10. docs: update README
 
+# Folder Structure
+
+```
+src/
+│
+├── app/
+│   ├── dashboard/
+│   ├── tweets/
+│   ├── queries/
+│   ├── automation/
+│   ├── settings/
+│   ├── layout.tsx
+│   └── page.tsx
+│
+├── components/
+│   ├── ui/
+│   ├── layout/
+│   ├── dashboard/
+│   ├── tweets/
+│   ├── queries/
+│   └── common/
+│
+├── lib/
+│   ├── axios.ts
+│   ├── query-client.ts
+│   └── utils.ts
+│
+├── hooks/
+│
+├── services/
+│   ├── tweets.ts
+│   ├── settings.ts
+│   ├── dashboard.ts
+│   ├── queries.ts
+│   └── automation.ts
+│
+├── providers/
+│   └── QueryProvider.tsx
+│
+├── types/
+│
+└── constants/
+
+```
+
 ## Immediate Next Tasks
 
 1.  Configure QueryProvider.
@@ -128,4 +174,3 @@ Create hooks for: - Dashboard - Tweets - Queries - Settings - Automation
     - /settings
     - /automation
 6.  Connect dashboard API first.
-
