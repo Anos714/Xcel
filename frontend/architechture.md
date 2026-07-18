@@ -118,48 +118,108 @@ Create hooks for: - Dashboard - Tweets - Queries - Settings - Automation
 
 # Folder Structure
 
-```
+````
 src/
 │
 ├── app/
-│   ├── dashboard/
-│   ├── tweets/
-│   ├── queries/
-│   ├── automation/
-│   ├── settings/
+│   ├── (dashboard)/
+│   │   ├── layout.tsx
+│   │   ├── dashboard/
+│   │   │   └── page.tsx
+│   │   ├── tweets/
+│   │   │   └── page.tsx
+│   │   ├── queries/
+│   │   │   └── page.tsx
+│   │   ├── automation/
+│   │   │   └── page.tsx
+│   │   └── settings/
+│   │       └── page.tsx
+│   │
 │   ├── layout.tsx
-│   └── page.tsx
+│   ├── page.tsx          // Landing page (future)
+│   ├── loading.tsx
+│   ├── not-found.tsx
+│   ├── error.tsx
+│   └── globals.css
 │
 ├── components/
-│   ├── ui/
+│   ├── ui/               // shadcn (don't modify unless necessary)
+│   │
 │   ├── layout/
+│   │   ├── AppSidebar.tsx
+│   │   ├── AppNavbar.tsx
+│   │   ├── Logo.tsx
+│   │   ├── NavMain.tsx
+│   │   └── NavUser.tsx
+│   │
+│   ├── common/
+│   │   ├── PageHeader.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── Loading.tsx
+│   │   └── ConfirmDialog.tsx
+│   │
 │   ├── dashboard/
+│   │   ├── StatsGrid.tsx
+│   │   ├── StatsCard.tsx
+│   │   ├── RecentTweets.tsx
+│   │   └── UpcomingTweets.tsx
+│   │
 │   ├── tweets/
+│   │   ├── TweetTable.tsx
+│   │   ├── TweetForm.tsx
+│   │   └── DeleteTweetDialog.tsx
+│   │
 │   ├── queries/
-│   └── common/
-│
-├── lib/
-│   ├── axios.ts
-│   ├── query-client.ts
-│   └── utils.ts
+│   │   ├── QueryTable.tsx
+│   │   └── QueryForm.tsx
+│   │
+│   ├── automation/
+│   │   └── AutomationCard.tsx
+│   │
+│   └── settings/
+│       ├── SettingsForm.tsx
+│       └── TimeSlots.tsx
 │
 ├── hooks/
+│   ├── useDashboard.ts
+│   ├── useTweets.ts
+│   ├── useQueries.ts
+│   ├── useAutomation.ts
+│   └── useSettings.ts
 │
 ├── services/
-│   ├── tweets.ts
-│   ├── settings.ts
-│   ├── dashboard.ts
-│   ├── queries.ts
-│   └── automation.ts
+│   ├── dashboard.service.ts
+│   ├── tweets.service.ts
+│   ├── queries.service.ts
+│   ├── automation.service.ts
+│   └── settings.service.ts
 │
 ├── providers/
 │   └── QueryProvider.tsx
 │
-├── types/
+├── lib/
+│   ├── axios.ts
+│   ├── queryClient.ts
+│   ├── utils.ts
+│   └── formatDate.ts
 │
-└── constants/
+├── constants/
+│   ├── navigation.ts
+│   ├── routes.ts
+│   └── queryKeys.ts
+│
+├── types/
+│   ├── tweet.ts
+│   ├── query.ts
+│   ├── settings.ts
+│   ├── dashboard.ts
+│   └── api.ts
+│
+└── assets/
+    ├── images/
+    └── icons/
 
-```
+    ```
 
 ## Immediate Next Tasks
 
@@ -174,3 +234,4 @@ src/
     - /settings
     - /automation
 6.  Connect dashboard API first.
+````

@@ -41,7 +41,6 @@ export default function AppSidebar() {
               {NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
-                    asChild
                     isActive={pathname === item.href}
                     className="
                       h-11
