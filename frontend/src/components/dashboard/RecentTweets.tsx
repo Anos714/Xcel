@@ -47,7 +47,7 @@ export default function RecentTweets({ tweets }: Props) {
                 </div>
 
                 <p className="whitespace-nowrap text-xs text-muted-foreground">
-                  {new Date(tweet.createdAt).toLocaleDateString()}
+                  {new Date(tweet.createdAt || "").toLocaleDateString()}
                 </p>
               </div>
             ))}
