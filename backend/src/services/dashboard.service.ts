@@ -53,6 +53,7 @@ export const getDashboardInfo = async () => {
     db
       .select({
         id: tweets.id,
+        type:tweets.type,
         content: tweets.content,
         status: tweets.status,
         createdAt: tweets.createdAt,
