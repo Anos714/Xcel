@@ -1,0 +1,1 @@
+ALTER TABLE "settings" ADD COLUMN "automation_times" jsonb DEFAULT '["00:00","01:00","02:00"]' NOT NULL;

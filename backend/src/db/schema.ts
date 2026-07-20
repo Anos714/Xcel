@@ -40,15 +40,15 @@ export const queries = pgTable(
       .$onUpdateFn(() => new Date())
       .notNull(),
   },
-  (table) => [
-    uniqueIndex("queries_query_unique").on(table.query)
-  ]
+  (table) => [uniqueIndex("queries_query_unique").on(table.query)],
 );
 
 export const tweets = pgTable(
   "tweets",
   {
-    id: uuid("id").primaryKey().default(sql`uuidv7()`),
+    id: uuid("id")
+      .primaryKey()
+      .default(sql`uuidv7()`),
 
     content: text("content").notNull(),
 
@@ -71,22 +71,26 @@ export const tweets = pgTable(
       .notNull(),
   },
   (table) => [
+    index("tweets_status_idx").on(table.status),
 
-     index("tweets_status_idx").on(table.status),
-
-     index("tweets_schedule_idx").on(table.scheduledFor),
+    index("tweets_schedule_idx").on(table.scheduledFor),
   ],
 );
 
 export const settings = pgTable("settings", {
- id: uuid("id")
-      .primaryKey()
-      .default(sql`uuidv7()`),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`uuidv7()`),
   automationEnabled: boolean("automation_enabled").default(true).notNull(),
 
   postingTimes: jsonb("posting_times")
     .$type<string[]>()
     .default(["10:00", "14:00", "18:00", "22:00"])
+    .notNull(),
+
+  automationTimes: jsonb("automation_times")
+    .$type<string[]>()
+    .default(["00:00", "01:00", "02:00"])
     .notNull(),
 
   timezone: text("timezone").default("Asia/Kolkata").notNull(),
