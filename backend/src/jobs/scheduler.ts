@@ -10,6 +10,7 @@ export const registerAutomationScheduler = async () => {
     "daily-automation",
     {
       pattern: "0 0 * * *", // Every day at 12:00 AM
+      tz: "Asia/Kolkata",
     },
     {
       name: "generate-daily-tweets",
