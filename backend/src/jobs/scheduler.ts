@@ -17,7 +17,7 @@ export const registerAutomationScheduler = async () => {
         removeOnComplete: 100,
         removeOnFail: 50,
       },
-    }
+    },
   );
 
   logger.info("Automation scheduler registered");
@@ -27,11 +27,10 @@ export const registerPostingSchedulers = async () => {
   // Get posting times from settings
   const [appSettings] = await db.select().from(settings).limit(1);
 
-  let generatedSettings=appSettings;
+  let generatedSettings = appSettings;
   if (!appSettings) {
-   generatedSettings=await createDefaultSetting()
-   logger.info("Default settings created");
-    
+    generatedSettings = await createDefaultSetting();
+    logger.info("Default settings created");
   }
 
   // Remove previous schedulers
@@ -44,10 +43,11 @@ export const registerPostingSchedulers = async () => {
       `posting-${index}`,
       {
         pattern: `${minute} ${hour} * * *`,
+        tz: "Asia/Kolkata",
       },
       {
         name: "post-tweet",
-      }
+      },
     );
   }
 
@@ -59,7 +59,6 @@ export const removePostingSchedulers = async () => {
   for (let i = 0; i < 15; i++) {
     try {
       await postingQueue.removeJobScheduler(`posting-${i}`);
-    } catch {
-    }
+    } catch {}
   }
 };
