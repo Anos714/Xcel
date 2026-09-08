@@ -189,7 +189,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative z-10 mx-6 my-24 overflow-hidden rounded-3xl border border-[#d9ff68]/20 bg-[#d9ff68] px-6 py-20 text-center text-[#0b0d0b] sm:px-12">
+      <section className="relative z-10 mx-auto my-24 w-[calc(100%-3rem)] max-w-5xl overflow-hidden rounded-3xl border border-[#d9ff68]/20 bg-[#d9ff68] px-6 py-20 text-center text-[#0b0d0b] sm:px-12">
         <div className="relative z-10"><Target className="mx-auto mb-5 size-8" /><h2 className="mx-auto max-w-2xl text-4xl font-medium tracking-[-0.05em] sm:text-6xl">Your next tweet can start with a query.</h2><p className="mx-auto mt-5 max-w-md text-sm leading-6 text-[#273020]">Create manually, schedule ahead, or automate trend-based posts with Xcel.</p><Link href="/dashboard" className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#0b0d0b] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#242a20]">Open Xcel <Zap className="size-4" /></Link></div>
         <div className="absolute -left-20 -top-32 size-80 rounded-full border border-black/10" /><div className="absolute -bottom-48 -right-20 size-96 rounded-full border border-black/10" />
       </section>
