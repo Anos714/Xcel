@@ -12,6 +12,14 @@ Generate, schedule, and publish AI-generated tweets from topics that matter to y
 
 ---
 
+## Landing page
+
+The Xcel landing page introduces the complete Twitter automation workflow: create posts manually, schedule them for later, or use query-driven web research to generate and publish trend-based content automatically.
+
+![Xcel landing page](frontend/public/landing-page.png)
+
+---
+
 ## Documentation
 
 | Document | Description |
@@ -41,7 +49,7 @@ The goal is simple:
 Xcel is currently designed for personal use.
 
 - ✅ Backend automation engine is production-ready.
-- 🚧 Frontend dashboard is under active development.
+- ✅ Frontend dashboard and public landing page are complete.
 - 🔒 Authentication and OAuth are intentionally not implemented.
 - 👤 The current version supports a single-user workflow.
 
@@ -341,6 +349,7 @@ PostgreSQL
 | Zod             | 4.4.3   | Validation              |
 | Sonner          | 2.0.7   | Toast Notifications     |
 | Lucide React    | 1.24.0  | Icons                   |
+| Motion          | 13.2.0  | Landing page animations  |
 
 ---
 
@@ -423,7 +432,7 @@ PostgreSQL
 
 ---
 
-## 🚧 Phase 5 — Frontend Dashboard _(In Progress)_
+## ✅ Phase 5 — Frontend Dashboard _(Completed)_
 
 - Dashboard UI
 - Tweet management
@@ -431,6 +440,8 @@ PostgreSQL
 - Settings page
 - Analytics cards
 - Responsive layout
+- Landing page with animated hero, bento features, workflow, CTA, and footer
+- Dashboard-to-landing-page navigation
 
 ---
 
@@ -464,7 +475,7 @@ PostgreSQL
 | Queue Workers          | ✅ Complete    |
 | Scheduler              | ✅ Complete    |
 | Database               | ✅ Complete    |
-| Frontend               | 🚧 In Progress |
+| Frontend               | ✅ Complete    |
 | Authentication         | ⏳ Planned     |
 | OAuth                  | ⏳ Planned     |
 | Analytics              | ⏳ Planned     |
