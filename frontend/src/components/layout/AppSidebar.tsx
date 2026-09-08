@@ -24,7 +24,7 @@ export default function AppSidebar() {
     <Sidebar className="border-r">
       <SidebarHeader className="border-b px-5 py-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">XOLO</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Xcel</h1>
 
           <p className="text-xs text-muted-foreground">AI X Automation</p>
         </div>

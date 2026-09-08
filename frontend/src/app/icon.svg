@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>XOLO</title>
+  <rect width="64" height="64" rx="16" fill="#171717"/>
+  <path d="M16 16h10l11 14 11-14h10L42 36l16 20H48L37 42 26 56H16l16-20L16 16Z" fill="#fff"/>
+  <circle cx="52" cy="12" r="5" fill="#a78bfa"/>
+</svg>

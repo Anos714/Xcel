@@ -49,7 +49,7 @@ export default function TweetFilters({
 
       {/* Status */}
 
-      <Select value={status} onValueChange={onStatusChange}>
+      <Select value={status} onValueChange={(value) => value && onStatusChange(value)}>
         <SelectTrigger className="w-full md:w-44">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
@@ -67,7 +67,7 @@ export default function TweetFilters({
 
       {/* Type */}
 
-      <Select value={type} onValueChange={onTypeChange}>
+      <Select value={type} onValueChange={(value) => value && onTypeChange(value)}>
         <SelectTrigger className="w-full md:w-44">
           <SelectValue placeholder="Type" />
         </SelectTrigger>

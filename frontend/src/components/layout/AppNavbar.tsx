@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PAGE_TITLES } from "@/constants/pageTitles";
+import ThemeToggle from "./ThemeToggle";
 
 export default function AppNavbar() {
   const pathname = usePathname();
@@ -24,6 +25,7 @@ export default function AppNavbar() {
 
       {/* Right */}
       <div className="flex items-center gap-4">
+        <ThemeToggle />
         <Avatar className="h-9 w-9">
           <AvatarImage src="" alt="Rahul" />
 

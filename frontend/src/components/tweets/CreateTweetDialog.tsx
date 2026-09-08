@@ -53,7 +53,7 @@ export default function CreateTweetDialog() {
     defaultValues: {
       content: "",
 
-      hashtags: "",
+      hashtags: [],
 
       postType: "now",
 
