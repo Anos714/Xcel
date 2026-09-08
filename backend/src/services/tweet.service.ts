@@ -1,8 +1,8 @@
 import { and, count, desc, eq, } from "drizzle-orm";
-import { ai } from "../config/gemini";
 import { db } from "../db";
 import { tweets } from "../db/schema";
 import { enhanceTweetPrompt } from "../prompts/generateTweet.prompt";
+import { generateContentWithFallback } from "./gemini.service";
 import { postTweet } from "./buffer.service";
 import { postingQueue } from "../queues/posting.queue";
 import AppError from "../utils/AppError";
@@ -15,23 +15,18 @@ export const enhanceTweet=async(content:string):Promise<EnhanceTweetRes>=>{
     
         const prompt = enhanceTweetPrompt(content);
 
-         const response = await ai.models.generateContent({
-              model: "gemini-3.5-flash",
-              contents: prompt,
-              config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                  type: "object",
-                  properties: {
-                    content: {
-                      type: "string",
-                    },
-                   
-                  },
-                  required: ["content"],
-                },
-              },
-            });
+         const response = await generateContentWithFallback(prompt, {
+           responseMimeType: "application/json",
+           responseSchema: {
+             type: "object",
+             properties: {
+               content: {
+                 type: "string",
+               },
+             },
+             required: ["content"],
+           },
+         });
 
              if (!response.text) {
                   throw new AppError("Gemini returned an empty response",502);

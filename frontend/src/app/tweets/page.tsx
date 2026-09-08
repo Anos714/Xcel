@@ -41,6 +41,7 @@ export default function TweetsPage() {
             <select value={postType} onChange={(event) => setPostType(event.target.value as "now" | "scheduled")} className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm"><option value="now">Post immediately</option><option value="scheduled">Schedule for later</option></select>
             {postType === "scheduled" ? <Input type="datetime-local" value={scheduledFor} onChange={(event) => setScheduledFor(event.target.value)} /> : <div />}
           </div>
+          {enhance.isError ? <p className="text-sm text-destructive">{enhance.error instanceof Error ? enhance.error.message : "AI enhancement failed. Please try again."}</p> : null}
           <div className="flex flex-wrap justify-end gap-2">
             <Button variant="outline" onClick={() => enhance.mutate()} disabled={!content.trim() || enhance.isPending}>{enhance.isPending ? <Loader2 className="animate-spin" /> : <Sparkles />} Enhance with AI</Button>
             <Button onClick={() => create.mutate()} disabled={!content.trim() || create.isPending}>{create.isPending ? <Loader2 className="animate-spin" /> : <CalendarClock />} {postType === "now" ? "Publish tweet" : "Schedule tweet"}</Button>

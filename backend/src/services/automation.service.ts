@@ -1,5 +1,5 @@
 import { tweets } from "./../db/schema.js";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { queries } from "../db/schema.js";
 import crypto from "crypto";
@@ -13,23 +13,16 @@ export const runAutomation = async () => {
     const activeQueries = await getActiveQueries();
     const randomQueries = pickRandomQueries(activeQueries);
 
-    let generatedTweets: TweetResponse[] = [];
+    return Promise.all(
+      randomQueries.map(async (query) => {
+        const searchResults = await searchWeb(query);
+        const tweet = await generateTweet(searchResults);
 
-    for (const query of randomQueries) {
-      const searchResults = await searchWeb(query);
-      
+        await savePendingTweet(query, tweet);
 
-      const tweet = await generateTweet(searchResults);
-      
-
-      await savePendingTweet( query, tweet);
-
-      generatedTweets.push(tweet);
-    }
-
-    
-
-    return generatedTweets;
+        return tweet;
+      }),
+    );
 
 };
 
