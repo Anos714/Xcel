@@ -121,6 +121,33 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  @keyframes landing-float {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(0, -16px, 0) scale(1.04); }
+  }
+
+  .landing-page { font-family: var(--font-sans), sans-serif; }
+  .landing-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+  }
+  .landing-gradient-text {
+    background: linear-gradient(110deg, #d9ff68 10%, #9bea78 55%, #b4e9ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .landing-orb { position: absolute; border-radius: 9999px; filter: blur(80px); pointer-events: none; animation: landing-float 8s ease-in-out infinite; }
+  .landing-orb-one { width: 300px; height: 300px; background: #d9ff68; opacity: .10; top: 25%; left: 4%; }
+  .landing-orb-two { width: 260px; height: 260px; background: #6f8cff; opacity: .12; right: 4%; bottom: 18%; animation-delay: -3s; }
+  .landing-primary-button, .landing-secondary-button { display: inline-flex; align-items: center; gap: .5rem; border-radius: .75rem; padding: .8rem 1.15rem; font-size: .875rem; font-weight: 500; transition: all .2s ease; }
+  .landing-primary-button { background: #d9ff68; color: #0b0d0b; }
+  .landing-primary-button:hover { background: #e4ff96; transform: translateY(-2px); }
+  .landing-secondary-button { color: rgba(255,255,255,.65); }
+  .landing-secondary-button:hover { color: white; background: rgba(255,255,255,.06); }
+  .landing-dashboard-card { background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.01)); }
+  .landing-feature-card { min-height: 275px; border-radius: 1.5rem; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.025); padding: 1.5rem; transition: transform .25s ease, border-color .25s ease, background .25s ease; }
+  .landing-feature-card:hover { transform: translateY(-4px); border-color: rgba(217,255,104,.3); background: rgba(255,255,255,.05); }
   body {
     @apply bg-background text-foreground;
   }

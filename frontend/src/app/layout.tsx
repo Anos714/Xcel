@@ -3,12 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import QueryProvider from "@/providers/QueryProvider";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
-import AppSidebar from "@/components/layout/AppSidebar";
-import AppNavbar from "@/components/layout/AppNavbar";
+import AppChrome from "@/components/layout/AppChrome";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -86,13 +81,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <QueryProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                <AppNavbar />
-                <main className="flex-1 p-8">{children}</main>
-              </SidebarInset>
-            </SidebarProvider>
+            <AppChrome>{children}</AppChrome>
           </QueryProvider>
         </ThemeProvider>
       </body>

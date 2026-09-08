@@ -23,11 +23,11 @@ export default function AppSidebar() {
   return (
     <Sidebar className="border-r">
       <SidebarHeader className="border-b px-5 py-6">
-        <div>
+        <Link href="/" className="block rounded-lg transition-opacity hover:opacity-80">
           <h1 className="text-2xl font-bold tracking-tight">Xcel</h1>
 
           <p className="text-xs text-muted-foreground">AI X Automation</p>
-        </div>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent className="px-3 py-4">
