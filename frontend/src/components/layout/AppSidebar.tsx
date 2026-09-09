@@ -23,7 +23,10 @@ export default function AppSidebar() {
   return (
     <Sidebar className="border-r">
       <SidebarHeader className="border-b px-5 py-6">
-        <Link href="/" className="block rounded-lg transition-opacity hover:opacity-80">
+        <Link
+          href="/"
+          className="block rounded-lg transition-opacity hover:opacity-80"
+        >
           <h1 className="text-2xl font-bold tracking-tight">Xcel</h1>
 
           <p className="text-xs text-muted-foreground">AI X Automation</p>
@@ -40,10 +43,16 @@ export default function AppSidebar() {
             <SidebarMenu className="space-y-1">
               {NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    isActive={pathname === item.href}
-                    className="
+                  <Link
+                    href={item.href}
+                    className="flex w-full items-center gap-3 cursor-pointer"
+                  >
+                    <SidebarMenuButton
+                      isActive={pathname === item.href}
+                      className="
                       h-11
+                      w-full
+                      cursor-pointer
                       rounded-lg
                       transition-all
                       duration-200
@@ -51,16 +60,12 @@ export default function AppSidebar() {
                       data-[active=true]:bg-primary
                       data-[active=true]:text-primary-foreground
                     "
-                  >
-                    <Link
-                      href={item.href}
-                      className="flex w-full items-center gap-3"
                     >
                       <item.icon className="h-5 w-5" />
 
                       <span className="text-sm font-medium">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
+                    </SidebarMenuButton>
+                  </Link>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
