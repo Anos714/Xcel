@@ -8,6 +8,7 @@ export interface Settings {
   timezone: string | null;
 }
 
-export const getSettings = async () => (await api.get<{ data: Settings }>("/settings")).data.data;
+export const getSettings = async () =>
+  (await api.get<{ data: Settings }>("/settings")).data.data;
 export const updateSettings = async (id: string, input: Partial<Settings>) =>
   (await api.patch<{ data: Settings }>(`/settings/${id}`, input)).data.data;
