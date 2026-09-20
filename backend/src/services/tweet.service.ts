@@ -7,6 +7,29 @@ import { postTweet } from "./buffer.service";
 import { postingQueue } from "../queues/posting.queue";
 import AppError from "../utils/AppError";
 
+/**
+ * BullMQ operations share a single ioredis client configured with
+ * `maxRetriesPerRequest: null` (infinite retries), which is what BullMQ
+ * workers need. If Redis is unreachable, a queue call would otherwise hang
+ * forever and take the HTTP request down with it. This caps any queue call
+ * so request handlers fail fast and can degrade gracefully instead.
+ */
+const QUEUE_TIMEOUT_MS = 5_000;
+
+const withQueueTimeout = async <T>(operation: Promise<T>): Promise<T | undefined> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const timeout = new Promise<undefined>((resolve) => {
+    timer = setTimeout(() => resolve(undefined), QUEUE_TIMEOUT_MS);
+  });
+
+  try {
+    return await Promise.race([operation, timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+};
+
 export type EnhanceTweetRes={
     content:string
 }
@@ -156,10 +179,10 @@ export const getTweets = async (
 };
 
 export const deleteTweet = async (
-  
-  tweetId: string
-) => {
-  const [tweet] = await db
+   
+    tweetId: string
+  ) => {
+    const [tweet] = await db
     .select()
     .from(tweets)
     .where(
@@ -179,11 +202,15 @@ export const deleteTweet = async (
     throw new AppError("Posted tweets cannot be deleted.",400);
   }
 
-  // Remove scheduled/immediate pending job if it exists
-  const job = await postingQueue.getJob(tweet.id);
+  // Remove scheduled/immediate pending job if it exists.
+  // The queue call is guarded: if Redis/BullMQ is unreachable this must not
+  // hang the request forever (ioredis is configured with infinite retries).
+  // A leftover job is harmless — the posting worker no-ops when the tweet no
+  // longer exists.
+  const job = await withQueueTimeout(postingQueue.getJob(tweet.id));
 
   if (job) {
-    await job.remove();
+    await withQueueTimeout(job.remove());
   }
 
   const [deletedTweet]=await db
@@ -191,7 +218,7 @@ export const deleteTweet = async (
     .where(eq(tweets.id, tweet.id)).returning();
 
   return deletedTweet;
-};
+  };
 
 export const updateTweet = async (
  
